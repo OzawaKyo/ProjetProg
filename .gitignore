@@ -1,0 +1,11 @@
+#all objects file
+/**.o
+
+#examples bin files
+Examples/example?
+
+#simulator bin files
+arm_simulator
+send_irq
+memory_test
+registers_test
