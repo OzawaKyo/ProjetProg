@@ -1,50 +1,84 @@
 /*
-Armator - simulateur de jeu d'instruction ARMv5T à but pédagogique
+Armator - simulateur de jeu d'instruction ARMv5T ï¿½ but pï¿½dagogique
 Copyright (C) 2011 Guillaume Huard
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software
-Foundation (version 2 ou bien toute autre version ultérieure choisie par vous).
+termes de la Licence Publique Gï¿½nï¿½rale GNU publiï¿½e par la Free Software
+Foundation (version 2 ou bien toute autre version ultï¿½rieure choisie par vous).
 
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE
+Ce programme est distribuï¿½ car potentiellement utile, mais SANS AUCUNE
 GARANTIE, ni explicite ni implicite, y compris les garanties de
-commercialisation ou d'adaptation dans un but spécifique. Reportez-vous à la
-Licence Publique Générale GNU pour plus de détails.
+commercialisation ou d'adaptation dans un but spï¿½cifique. Reportez-vous ï¿½ la
+Licence Publique Gï¿½nï¿½rale GNU pour plus de dï¿½tails.
 
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même
-temps que ce programme ; si ce n'est pas le cas, écrivez à la Free Software
+Vous devez avoir reï¿½u une copie de la Licence Publique Gï¿½nï¿½rale GNU en mï¿½me
+temps que ce programme ; si ce n'est pas le cas, ï¿½crivez ï¿½ la Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
-États-Unis.
+ï¿½tats-Unis.
 
 Contact: Guillaume.Huard@imag.fr
-	 Bâtiment IMAG
+	 Bï¿½timent IMAG
 	 700 avenue centrale, domaine universitaire
-	 38401 Saint Martin d'Hères
+	 38401 Saint Martin d'Hï¿½res
 */
 #include "registers.h"
 #include "arm_constants.h"
 #include <stdlib.h>
 
+struct register {
+    uint32_t value;
+    uint8_t mode;
+};
+
 struct registers_data {
-    /* À compléter... */
+    register *reg;
 };
 
 registers registers_create() {
-    registers r = NULL;
-    /* À compléter... */
+    registers r = malloc(sizeof(struct registers_data)*7);
+    for(int i = 0, i < 7; i ++){
+        r[i]->reg = malloc(sizeof(struct register)*18);
+        r->reg[i]->value = 0;
+        switch (i)
+        {
+        case 0:
+            r->reg[i]->mode = USR;
+            break;
+        case 1:
+            r->reg[i]->mode = FIQ;
+            break;
+        case 2:
+            r->reg[i]->mode = IRQ;
+            break;
+        case 3:
+            r->reg[i]->mode = SVC;
+            break;
+        case 4:
+            r->reg[i]->mode = ABT;
+            break;
+        case 5:
+            r->reg[i]->mode = UND;
+            break;
+        case 6:
+            r->reg[i]->mode = SYS;
+            break;
+        default:
+            break;
+        }
+    }
     return r;
 }
 
 void registers_destroy(registers r) {
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
 }
 
 uint8_t registers_get_mode(registers r) {
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
     return SVC;
 }
 
 static int registers_mode_has_spsr(registers r, uint8_t mode) {
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
     return 1;
 }
 
@@ -53,36 +87,36 @@ int registers_current_mode_has_spsr(registers r) {
 }
 
 int registers_in_a_privileged_mode(registers r) {
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
     return 0;
 }
 
 uint32_t registers_read(registers r, uint8_t reg, uint8_t mode) {
     uint32_t value = 0;
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
     return value;
 }
 
 uint32_t registers_read_cpsr(registers r) {
     uint32_t value = 0;
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
     return value;
 }
 
 uint32_t registers_read_spsr(registers r, uint8_t mode) {
     uint32_t value = 0;
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
     return value;
 }
 
 void registers_write(registers r, uint8_t reg, uint8_t mode, uint32_t value) {
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
 }
 
 void registers_write_cpsr(registers r, uint32_t value) {
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
 }
 
 void registers_write_spsr(registers r, uint8_t mode, uint32_t value) {
-    /* À compléter... */
+    /* ï¿½ complï¿½ter... */
 }
