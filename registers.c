@@ -35,7 +35,10 @@ registers registers_create() {
 }
 
 void registers_destroy(registers r) {
-    /* � compl�ter... */
+    for(int i = 0, i < 17; i ++){
+        free(r[i])
+    }
+    free(r);
 }
 
 uint8_t registers_get_mode(registers r) {
