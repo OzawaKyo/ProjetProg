@@ -1,5 +1,19 @@
+#dossier vscode
+.vscode
+
+##All build files :
+
+#Makefiles
+Makefile
+Examples/Makefile
+
+#config files
+config.*
+!config.h.in
+
 #all objects file
-/**.o
+*.o
+*/**/*.o
 
 #examples bin files
 Examples/example?
