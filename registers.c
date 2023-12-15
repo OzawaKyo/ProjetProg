@@ -24,48 +24,14 @@ Contact: Guillaume.Huard@imag.fr
 #include "arm_constants.h"
 #include <stdlib.h>
 
-struct register {
+struct registers_data {
+    uint8_t reg;
     uint32_t value;
     uint8_t mode;
 };
 
-struct registers_data {
-    register *reg;
-};
-
 registers registers_create() {
-    registers r = malloc(sizeof(struct registers_data)*7);
-    for(int i = 0, i < 7; i ++){
-        r[i]->reg = malloc(sizeof(struct register)*18);
-        r->reg[i]->value = 0;
-        switch (i)
-        {
-        case 0:
-            r->reg[i]->mode = USR;
-            break;
-        case 1:
-            r->reg[i]->mode = FIQ;
-            break;
-        case 2:
-            r->reg[i]->mode = IRQ;
-            break;
-        case 3:
-            r->reg[i]->mode = SVC;
-            break;
-        case 4:
-            r->reg[i]->mode = ABT;
-            break;
-        case 5:
-            r->reg[i]->mode = UND;
-            break;
-        case 6:
-            r->reg[i]->mode = SYS;
-            break;
-        default:
-            break;
-        }
-    }
-    return r;
+    /* � compl�ter... */
 }
 
 void registers_destroy(registers r) {
