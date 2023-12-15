@@ -23,63 +23,40 @@ Contact: Guillaume.Huard@imag.fr
 #include "registers.h"
 #include "arm_constants.h"
 #include <stdlib.h>
-
-struct register {
-    uint32_t value;
-    uint8_t mode;
-};
+#include <stdint.h>
 
 struct registers_data {
-    register *reg;
-};
+    uint32_t value;
+    // uint8_t mode;
+}s_registers_data;
 
 registers registers_create() {
-    registers r = malloc(sizeof(struct registers_data)*7);
-    for(int i = 0, i < 7; i ++){
-        r[i]->reg = malloc(sizeof(struct register)*18);
-        r->reg[i]->value = 0;
-        switch (i)
-        {
-        case 0:
-            r->reg[i]->mode = USR;
-            break;
-        case 1:
-            r->reg[i]->mode = FIQ;
-            break;
-        case 2:
-            r->reg[i]->mode = IRQ;
-            break;
-        case 3:
-            r->reg[i]->mode = SVC;
-            break;
-        case 4:
-            r->reg[i]->mode = ABT;
-            break;
-        case 5:
-            r->reg[i]->mode = UND;
-            break;
-        case 6:
-            r->reg[i]->mode = SYS;
-            break;
-        default:
-            break;
+    registers r = malloc(sizeof(s_registers_data)*NB_REGISTER);
+    if (r != NULL) {
+        for(int i = 0; i < NB_REGISTER; i ++){
+            r[i].value = 0; //pas sur que les registres soient initialisés à 0
+            // r[i].mode = 0; 
         }
     }
     return r;
 }
 
 void registers_destroy(registers r) {
-    /* � compl�ter... */
+    free(r);
 }
 
 uint8_t registers_get_mode(registers r) {
-    /* � compl�ter... */
-    return SVC;
+    if (r != NULL) {
+        // return r->mode;
+        return SVC;
+    }
+    return 0;
 }
 
 static int registers_mode_has_spsr(registers r, uint8_t mode) {
-    /* � compl�ter... */
-    return 1;
+    if(mode == USR || mode == SYS)
+        return 0;
+    return 1; 
 }
 
 int registers_current_mode_has_spsr(registers r) {
@@ -87,36 +64,52 @@ int registers_current_mode_has_spsr(registers r) {
 }
 
 int registers_in_a_privileged_mode(registers r) {
-    /* � compl�ter... */
-    return 0;
+    if((r[16].value & PrivMask) != 0){ //r[16] = CPSR 
+        return 1; //1 = priviligié
+    }
+    return -1;
 }
 
+//registers_read(r, mode, i);
 uint32_t registers_read(registers r, uint8_t reg, uint8_t mode) {
     uint32_t value = 0;
-    /* � compl�ter... */
-    return value;
+    return value = r[reg].value;
 }
 
 uint32_t registers_read_cpsr(registers r) {
-    uint32_t value = 0;
-    /* � compl�ter... */
-    return value;
+    if(r != NULL){
+        uint32_t value = 0;
+        return value = r[16].value & (~CPSR_Reserved_Mask);
+    }
+    return -1;
 }
 
 uint32_t registers_read_spsr(registers r, uint8_t mode) {
-    uint32_t value = 0;
-    /* � compl�ter... */
-    return value;
+    if(r != NULL){
+        return -1;
+        /*if(r != NULL && mode != NULL){
+        return r[18].value; // ya pas de r[18] dans le mode user, donc faut verif le mode et ecrire dans le registre correspondant MAIS POUR L'INSTANT ON FAIT PAS LES MODES 
+        }*/
+    }
+    return -1;
 }
 
-void registers_write(registers r, uint8_t reg, uint8_t mode, uint32_t value) {
-    /* � compl�ter... */
+void registers_write(registers r, uint8_t reg, uint8_t mode, uint32_t value) { // c'est quoi reg ? c'est genre le nom du registre (dans notre cas, sa position dans notre tableau) mais dans le main ca rentre le nom ou l'indice ?
+    if(r != NULL){
+        //r[reg]->mode = mode; 
+        // dans le test ca appelle comme ca     registers_write(r, 15, mode, 0);
+        r[reg].value = value;
+    }
 }
 
 void registers_write_cpsr(registers r, uint32_t value) {
-    /* � compl�ter... */
+    if(r != NULL){
+        r[16].value = value & (~CPSR_Reserved_Mask);
+    }
 }
 
 void registers_write_spsr(registers r, uint8_t mode, uint32_t value) {
-    /* � compl�ter... */
+    if(r != NULL){
+        //r[18].value = value;
+    }
 }
