@@ -23,107 +23,111 @@ Contact: Guillaume.Huard@imag.fr
 #include <stdlib.h>
 #include "memory.h"
 #include "util.h"
+#include <stdio.h>
 
-struct memory_data {
-    uint8_t value8;
-    uint16_t value16;
-    uint32_t value32;
-    int fin;
-};
+struct memory_data{
+  uint8_t *value; 
+  size_t taille; 
+}s_memory_data;
 
 memory memory_create(size_t size) {
-    memory mem = malloc(sizeof(struct memory_data) * (size + 1));
+    memory mem = malloc(sizeof(s_memory_data));
     if (mem != NULL) {
-        for (size_t i = 0; i < size; i++) {
-            mem[i].value8 = NULL;
-            mem[i].value16 = NULL;
-            mem[i].value32 = NULL;
-            mem[i].fin = 0;
-        }
-        mem[size].fin = 1;
+        mem->value = malloc(sizeof(uint8_t) * size);
+        mem->taille = size;
     }
     return mem;
 }
 
 size_t memory_get_size(memory mem) {
-    size_t i = 0;
-    while (mem[i].fin != 1) {
-        i++;
-    }
-    return i;
+    return mem->taille;
 }
 
 void memory_destroy(memory mem) {
+    free(mem->value);
     free(mem);
 }
 
 int memory_read_byte(memory mem, uint32_t address, uint8_t *value) {
-   if (address + 1 >= memory_get_size(mem)) {
+   if (address > memory_get_size(mem)) {
         return -1;
+    }else{
+        *value = mem->value[address];
     }
-    value = mem[address].value8;
     return 0; 
 }
 
-int memory_read_half(memory mem, uint32_t address, uint16_t *value, uint8_t be) { // gpt le frero 
-    // if (address + 1 >= memory_get_size(mem)) {
-    //     return -1;
-    // }
-    // if (be) {
-    //     // Big-endian byte order
-    //     *value = (uint16_t)(mem[address].value[0] << 8) | mem[address + 1].value[0];
-    // } else {
-    //     // Little-endian byte order
-    //     *value = (uint16_t)(mem[address + 1].value[0] << 8) | mem[address].value[0];
-    // }
+int memory_read_half(memory mem, uint32_t address, uint16_t *value, uint8_t be) { 
+    if (address + 1 > memory_get_size(mem)){
+        return -1;
+    }
+    for (int i = 0; i < 2; i++) {
+        *value = *value | mem->value[address+ i];
+        *value = *value << 8;
+    }
+    if (be == 0)
+        *value = reverse_2(mem->value[address]);
     return 0;
 }
 
-int memory_read_word(memory mem, uint32_t address, uint32_t *value, uint8_t be) { //weeeeeeeeeeeesh // (gpt) ça charbonne ici wsh
-    if (mem == NULL || value == NULL) {
+int memory_read_word(memory mem, uint32_t address, uint32_t *value, uint8_t be) { 
+    if (address + 3 > memory_get_size(mem)){
         return -1;
     }
-    if (address +3 >= memory_get_size(mem)) {
-        return -1; 
+    for (int i = 0; i < 4; i++) {
+        *value = *value | mem->value[address+ i];
+        *value = *value << 8;
     }
-    if (be) {
-        *value = (uint32_t)(mem[address].value[0] << 24) |
-                    (uint32_t)(mem[address + 1].value[0] << 16) |
-                        (uint32_t)(mem[address + 2].value[0] << 8) |
-                            (uint32_t)(mem[address + 3].value[0]);
-    } else {
-        *value = (uint32_t)(mem[address + 3].value[0] << 24) |
-                            (uint32_t)(mem[address + 2].value[0] << 16) |
-                            (uint32_t)(mem[address + 1].value[0] << 8) |
-                            (uint32_t)(mem[address].value[0]);
-    }
+    if (be == 0)
+        *value = reverse_4(*value);
     return 0;
 
 }
 
 int memory_write_byte(memory mem, uint32_t address, uint8_t value) {
-    if (address + 1 >= memory_get_size(mem)) {
+    if (address + 1 > memory_get_size(mem)) {
         return -1;
     }
-    mem[address].value8 = value; //cest pas bon// :thmubs down: //go essayer ça// c'est bon //non //si ça y est //non // normalement c'est bon // c'est toujours la cas ?
+    int bit ;
+    for (int i = 0; i < 32; i++)
+    {
+        if (i > 7)
+            mem->value[address] = clr_bit(mem->value[address],i);
+        else {
+            mem->value[address] = clr_bit(mem->value[address],i);
+            bit = get_bit(value, i);
+            if (bit == 1)
+                mem->value[address] = set_bit(mem->value[address], i);
+        }
+    }
     return 0;
 }
 
 int memory_write_half(memory mem, uint32_t address, uint16_t value, uint8_t be) {
-    // if (address + 1 >= memory_get_size(mem)) {
-    //     return -1; // Out of bounds
-    // }
-
-    // if (be) {
-    //     // Big-endian byte order
-    //     mem[address].value = (value >> 8) & 0xFF;
-    //     mem[address + 1].value = value & 0xFF;
-    // } else {
-    //     // Little-endian byte order
-    //     mem[address + 1].value = (value >> 8) & 0xFF;
-    //     mem[address].value = value & 0xFF;
-    // }
-
+    if (address + 1 > memory_get_size(mem)) {
+        return -1; 
+    }
+    int bit ;
+    switch (be)
+    {
+    case 1:
+            for (int i = 0; i < 32; i++)
+    {
+        if (i < 15)
+            mem->value[address] = clr_bit(mem->value[address],i);
+        else {
+            mem->value[address] = clr_bit(mem->value[address],i);
+            bit = get_bit(value, i);
+            if (bit == 1)
+                mem->value[address] = set_bit(mem->value[address], i);
+        }
+    }
+        break;
+    case 0 :
+        break;
+    default:
+        break;
+    }
     return 0;
 }
 
