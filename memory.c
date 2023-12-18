@@ -62,11 +62,11 @@ int memory_read_half(memory mem, uint32_t address, uint16_t *value, uint8_t be) 
         return -1;
     }
     for (int i = 0; i < 2; i++) {
-        *value = *value | mem->value[address+ i];
         *value = *value << 8;
+        *value = *value | mem->value[address+ i];
     }
     if (be == 0)
-        *value = reverse_2(mem->value[address]);
+        *value = reverse_2(*value);
     return 0;
 }
 
@@ -75,8 +75,8 @@ int memory_read_word(memory mem, uint32_t address, uint32_t *value, uint8_t be) 
         return -1;
     }
     for (int i = 0; i < 4; i++) {
-        *value = *value | mem->value[address+ i];
         *value = *value << 8;
+        *value = *value | mem->value[address+ i];
     }
     if (be == 0)
         *value = reverse_4(*value);
@@ -85,52 +85,45 @@ int memory_read_word(memory mem, uint32_t address, uint32_t *value, uint8_t be) 
 }
 
 int memory_write_byte(memory mem, uint32_t address, uint8_t value) {
-    if (address + 1 > memory_get_size(mem)) {
+   if (address > memory_get_size(mem)) {
         return -1;
+    }else{
+        mem->value[address] = value;
     }
-    int bit ;
-    for (int i = 0; i < 32; i++)
-    {
-        if (i > 7)
-            mem->value[address] = clr_bit(mem->value[address],i);
-        else {
-            mem->value[address] = clr_bit(mem->value[address],i);
-            bit = get_bit(value, i);
-            if (bit == 1)
-                mem->value[address] = set_bit(mem->value[address], i);
-        }
-    }
-    return 0;
+    return 0; 
 }
 
 int memory_write_half(memory mem, uint32_t address, uint16_t value, uint8_t be) {
-    if (address + 1 > memory_get_size(mem)) {
-        return -1; 
+    if (address + 1 > memory_get_size(mem)){
+        return -1;
     }
-    int bit ;
-    switch (be)
-    {
-    case 1:
-            for (int i = 0; i < 32; i++)
-    {
-        if (i < 15)
-            mem->value[address] = clr_bit(mem->value[address],i);
-        else {
-            mem->value[address] = clr_bit(mem->value[address],i);
-            bit = get_bit(value, i);
-            if (bit == 1)
-                mem->value[address] = set_bit(mem->value[address], i);
+    if (be) {
+            mem->value[address] = value >> 8;
+            mem->value[address + 1] = value;
+        } else {
+            mem->value[address] = value;
+            mem->value[address + 1] = value >> 8;
         }
-    }
-        break;
-    case 0 :
-        break;
-    default:
-        break;
-    }
+
     return 0;
 }
 
 int memory_write_word(memory mem, uint32_t address, uint32_t value, uint8_t be) {
-    return -1;
+        if (address + 3 > memory_get_size(mem)){
+        return -1;
+    }
+
+    if (be) {
+        mem->value[address] = value >> 24;
+        mem->value[address + 1] = value >> 16;
+        mem->value[address + 2] = value >> 8;
+        mem->value[address + 3] = value;
+    } else {
+        mem->value[address] = value;
+        mem->value[address + 1] = value >> 8;
+        mem->value[address + 2] = value >> 16;
+        mem->value[address + 3] = value >> 24;
+    }
+
+    return 0;
 }
