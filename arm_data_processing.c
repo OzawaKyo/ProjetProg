@@ -32,7 +32,75 @@ Contact: Guillaume.Huard@imag.fr
 #define LOGICAL_LEFT_SHIFT 0x00
 #define LOGICAL_RIGH_SHIFT 0x01
 #define ARITHMETIC_RIGH_SHIFT 0x02
-#define ROTATE_RIGHT 0x02
+#define ROTATE_RIGHT 0x03
+
+/* Data processing instructions */	
+uint32_t And(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	dest = src & op2;
+	return dest ;
+}	
+
+uint32_t Eor(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	dest = src ^ op2;
+	return dest ;
+}
+uint32_t Sub(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	dest = src - op2;
+	return dest ;
+}
+uint32_t Rsb(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	dest = op2 - src;
+	return dest ;
+}
+uint32_t Add(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	dest = src + op2;
+	return dest ;
+}
+uint32_t Adc(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	uint8_t carry = (registers_read_cpsr(p->reg) >> 29) & 0x01;
+	dest = src + op2 + carry;
+	return dest ;
+}
+uint32_t Sbc(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	uint8_t carry = (registers_read_cpsr(p->reg) >> 29) & 0x01;
+	carry = ~carry & 0x01;
+	dest = src - op2 - carry;
+	return dest ;
+}
+uint32_t Rsc(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	uint8_t carry = (registers_read_cpsr(p->reg) >> 29) & 0x01;
+	carry = ~carry & 0x01;
+	dest = op2 - src - carry;
+	return dest ;
+}
+uint32_t Tst(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	return src & op2;
+}
+uint32_t Teq(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	return src ^ op2;
+}
+uint32_t Cmp(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	return src - op2;
+}
+uint32_t Cmn(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	return src + op2;
+}
+uint32_t Orr(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	dest = src | op2;
+	return dest ;
+}
+uint32_t Mov(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	dest = op2;
+	return dest ;
+}
+uint32_t Bic(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	dest = src & (~op2);
+	return dest ;
+}
+uint32_t Mvn(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+	dest = ~op2;
+	return dest ;
+}
 
 uint32_t shift(arm_core p, uint32_t ins) {
 	uint32_t value;
@@ -50,41 +118,46 @@ uint32_t shift(arm_core p, uint32_t ins) {
 		switch (mode)
 		{
 		case LOGICAL_LEFT_SHIFT:
-			value = value << reg_imm
+			value = value << reg_imm;
 			break;
 		case LOGICAL_RIGH_SHIFT:
+			value = value >> reg_imm;
 			break;
 		case ARITHMETIC_RIGH_SHIFT:
+			value = asr(value, reg_imm);
 			break;
 		case ROTATE_RIGHT:
+			value = ror(value, reg_imm);
 			break;
 		default:
+			value = 0;
 			break;
 		}
 	} else {
 		mode = (ins >> 5) & 0x03;
 		reg_imm = (ins >> 8) & 0x0F;
+		value = arm_read_register(p,rm);
+		reg_imm = arm_read_register(p, reg_imm);
 		switch (mode)
 		{
 		case LOGICAL_LEFT_SHIFT:
-			/* code */
+			value = value << reg_imm;
 			break;
 		case LOGICAL_RIGH_SHIFT:
+			value = value >> reg_imm;
 			break;
 		case ARITHMETIC_RIGH_SHIFT:
+			value = asr(value, reg_imm);
 			break;
 		case ROTATE_RIGHT:
+			value = ror(value, reg_imm);
 			break;
 		default:
+			value = 0;
 			break;
 		}
 	}
-}
-uint32_t rotate(arm_core p, uint32_t ins){
-	uint8_t immed_8 = ins & 0xFF;
-	uint8_t rotate_imm = (ins >> 8) & 0x0F;
-	uint32_t immediate = (immed_8 >> (2 * rotate_imm)) | (immed_8 << (32 - 2 * rotate_imm));
-	return immediate;
+	return value;
 }
 
 /* Decoding functions for different classes of instructions */
@@ -95,14 +168,86 @@ int arm_data_processing_shift(arm_core p, uint32_t ins) {
 
 	uint32_t src = arm_read_register(p,rn);
 	uint32_t dest = arm_read_register(p,rd);
-	//shift(p,ins);
+	uint32_t rm = shift(p,ins);
 
-    switch (opcode) {
-		case 0x0:
-		return And(p, src, dest, dest);
-		default:
+
+	switch (opcode) {
+	case 0x0:
+		arm_write_register(p,rd,And(p, src , dest, rm));
+		break;
+	case 0x1:
+		arm_write_register(p,rd,Eor(p, src , dest, rm));
+		break;
+	case 0x2:
+		arm_write_register(p,rd,Sub(p, src , dest, rm));
+		break;
+	case 0x3:
+		arm_write_register(p,rd,Rsb(p, src , dest, rm));
+		break;
+	case 0x4:
+		arm_write_register(p,rd,Add(p, src , dest, rm));
+		break;
+	case 0x5:
+		arm_write_register(p,rd,Adc(p, src , dest, rm));
+		break;
+	case 0x6:
+		arm_write_register(p,rd,Sbc(p, src , dest, rm));
+		break;
+	case 0x7:
+		arm_write_register(p,rd,Rsc(p, src , dest, rm));
+		break;
+	case 0x8:
+		uint32_t resultat = Tst(p, src , dest, rm);
+		if (resultat == 0)
+		{
+			//Z = 1
+		}
+		else 
+		{
+			//Z = 0
+		}
+		// else
+		// {
+		// 	// !Z 
+		// 	//and
+		// 	// N or V
+		// 	//or
+		// 	// !N and !V
+		// }		
+		break;
+	case 0x9:
+		arm_write_register(p,rd,Teq(p, src , dest, rm));
+		break;
+	case 0xA:
+		arm_write_register(p,rd,Cmp(p, src , dest, rm));
+		break;
+	case 0xB:
+		arm_write_register(p,rd,Cmn(p, src , dest, rm));
+		break;
+	case 0xC:
+		arm_write_register(p,rd,Orr(p, src , dest, rm));
+		break;
+	case 0xD:
+		arm_write_register(p,rd,Mov(p, src , dest, rm));
+		break;
+	case 0xE:
+		arm_write_register(p,rd,Bic(p, src , dest, rm));
+		break;
+	case 0xF:
+		arm_write_register(p,rd,Mvn(p, src , dest, rm));
+		break;
+	
+	default:
 		return UNDEFINED_INSTRUCTION;
 	}
+	return 0;
+}
+
+uint32_t rotate(uint32_t ins){
+	uint8_t immed_8 = ins & 0xFF;
+	uint8_t rotate_imm = (ins >> 8) & 0x0F;
+	uint32_t immediate = (immed_8 >> (2 * rotate_imm)) | (immed_8 << (32 - 2 * rotate_imm));
+	return immediate;
 }
 
 int arm_data_processing_immediate_msr(arm_core p, uint32_t ins) {
@@ -112,7 +257,7 @@ int arm_data_processing_immediate_msr(arm_core p, uint32_t ins) {
 
 	uint32_t src = arm_read_register(p,rn);
 	uint32_t dest = arm_read_register(p,rd);
-	uint32_t immediate = rotate(p,ins);
+	uint32_t immediate = rotate(ins);
 
 	switch (opcode) {
 	case 0x0:
@@ -167,75 +312,5 @@ int arm_data_processing_immediate_msr(arm_core p, uint32_t ins) {
 	default:
 		return UNDEFINED_INSTRUCTION;
 	}
-}
-
-/* Data processing instructions */	
-uint32_t And(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	dest = src & op2;
-	return dest ;
-}	
-
-uint32_t Eor(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	dest = src ^ op2;
-	return dest ;
-}
-uint32_t Sub(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	dest = src - op2;
-	return dest ;
-}
-uint32_t Rsb(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	dest = op2 - src;
-	return dest ;
-}
-uint32_t Add(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	dest = src + op2;
-	return dest ;
-}
-uint32_t Adc(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	uint8_t carry = (registers_read_cpsr(p->reg) >> 29) & 0x01;
-	dest = src + op2 + carry;
-	return dest ;
-}
-uint32_t Sbc(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	uint8_t carry = (registers_read_cpsr(p->reg) >> 29) & 0x01;
-	carry = ~carry & 0x01;
-	dest = src - op2 - carry;
-	return dest ;
-}
-uint32_t Rsc(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	uint8_t carry = (registers_read_cpsr(p->reg) >> 29) & 0x01;
-	carry = ~carry & 0x01;
-	dest = op2 - src - carry;
-	return dest ;
-}
-uint32_t Tst(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	// The Tst function in the code you provided performs a bitwise AND operation between the src 
-	//and op2 values. It does not modify the dest value and returns the result of the bitwise AND operation.
-	return src & op2;
-}
-uint32_t Teq(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	return src ^ op2;
-}
-uint32_t Cmp(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	return src - op2;
-}
-uint32_t Cmn(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	// qqchose
-	return dest ;
-}
-uint32_t Orr(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	dest = src | op2;
-	return dest ;
-}
-uint32_t Mov(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	dest = op2;
-	return dest ;
-}
-uint32_t Bic(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	dest = src & (~op2);
-	return dest ;
-}
-uint32_t Mvn(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
-	dest = ~op2;
-	return dest ;
+	return 0;
 }

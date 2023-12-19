@@ -6,5 +6,9 @@ decr:
 
 main:
     mov r0, #5
-
+loop:
+    bl decr
+    bne loop
+end:
+    swi 0x123456
 .data
