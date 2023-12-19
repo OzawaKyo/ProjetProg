@@ -222,6 +222,7 @@ int arm_load_store_multiple(arm_core p, uint32_t ins) {
 }
 
 int stm(arm_core p, uint32_t ins){
+    //y a un mode d'adressage à prendre en compte MAIS JE LE TROUVE PAAAAAAAAS !!! Ok si avec P U et W ... MAIS JE SAIS PAS à QUOI çA SE REFERE !! ou alors j'ai tout faux 
    uint32_t b = (ins >> 22);
     if(b == 1){
 
@@ -231,9 +232,11 @@ int stm(arm_core p, uint32_t ins){
 int ldm(arm_core p, uint32_t ins){
     uint32_t b = (ins >> 22);
     if(b == 1){
-
+        //parcourir de liste des registre source
+        //pour chaque registre lu dans la liste inserer son contenu dans le registre destination 
+        //mais en faisant attention au mode de reecriture du registre 
     }
-}
+}//mais comment parcourir la liste ou même comment lire le mode, idfk 
 
 
 
