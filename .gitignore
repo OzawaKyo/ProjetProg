@@ -1,22 +1,29 @@
-#dossier vscode
+#vscode directory
 .vscode
 
-##All build files :
+##All build files with automake :
+
+#directories
+.deps/
+autom4te.cache/
+Examples/.deps/
 
 #Makefiles
 Makefile
 Examples/Makefile
 
-#config files
-config.*
-!config.h.in
+#some config files
+config.h
+config.log
+config.status
 
 #all objects file
 *.o
-*/**/*.o
+Examples/*.o
 
 #examples bin files
 Examples/example?
+Examples/insertion_sort
 
 #simulator bin files
 arm_simulator
