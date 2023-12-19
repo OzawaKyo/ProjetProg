@@ -89,7 +89,7 @@ int load(arm_core p, uint32_t ins){
 }
 
 int str(arm_core p, uint32_t ins){
-    // bon mehdi je modifie tes fonctions un peu
+    // bon mehdi je modifie tes fonctions un peu// Tu te prend pour qui ?????????
     uint8_t source = (ins >> 16) & 0x0F;
 	uint8_t dest = (ins >> 12) & 0x0F;
     uint32_t cond = (ins >> 28); // necessaire ?
@@ -207,8 +207,35 @@ int ldrh(arm_core p, uint32_t ins) {
 
 
 int arm_load_store_multiple(arm_core p, uint32_t ins) {
-    return UNDEFINED_INSTRUCTION;
+     uint32_t ls = (ins >> 20); // Extract bit L from instruction
+    switch (ls)
+    {
+    case ARM_INS_STORE:
+        stm(p, ins);
+        break;
+    case ARM_INS_LOAD:
+        ldm(p, ins);       
+        break;
+    default:
+        break;
+    }
 }
+
+int stm(arm_core p, uint32_t ins){
+   uint32_t b = (ins >> 22);
+    if(b == 1){
+
+    }
+}
+
+int ldm(arm_core p, uint32_t ins){
+    uint32_t b = (ins >> 22);
+    if(b == 1){
+
+    }
+}
+
+
 
 int arm_coprocessor_load_store(arm_core p, uint32_t ins) {
     /* Not implemented */
