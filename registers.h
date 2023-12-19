@@ -25,7 +25,7 @@ Contact: Guillaume.Huard@imag.fr
 #include <stdint.h>
 #include <stdio.h>
 
-#define NB_REGISTER 17 //R0-R12, R13/SP, R14/LR, R15/PC, CPSR 
+#define NB_REGISTER 18 //R0-R12, R13/SP, R14/LR, R15/PC, CPSR, SPSR 
 #define CPSR_Reserved_Mask 0x00F0FC00 //set reserved CPSR bits
 
 typedef struct registers_data *registers;

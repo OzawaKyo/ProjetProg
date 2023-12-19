@@ -224,19 +224,45 @@ int arm_load_store_multiple(arm_core p, uint32_t ins) {
 int stm(arm_core p, uint32_t ins){
     //y a un mode d'adressage à prendre en compte MAIS JE LE TROUVE PAAAAAAAAS !!! Ok si avec P U et W ... MAIS JE SAIS PAS à QUOI çA SE REFERE !! ou alors j'ai tout faux 
    uint32_t b = (ins >> 22);
-    if(b == 1){
-
+    if(b == 0){
+        uint32_t k;
+        uint8_t dest = (ins >> 16) & 0x0F;
+        uint8_t mod = registers_get_mode(p->reg);
+        uint32_t addr = registers_read(p->reg, dest, mod);
+        uint32_t value;
+            for(int i = 0; i < 16; i ++){
+                k = (ins >> i);
+                if(k == 1){
+                    value = registers_read(p->reg, i, mod);
+                    memory_write_byte(p->mem, addr, value);
+                    addr++;
+            }
+        } 
     }
 }
 
 int ldm(arm_core p, uint32_t ins){
     uint32_t b = (ins >> 22);
-    if(b == 1){
-        //parcourir de liste des registre source
-        //pour chaque registre lu dans la liste inserer son contenu dans le registre destination 
+    
+    if(b == 0){
+    
+        uint32_t k;
+        uint8_t source = (ins >> 16) & 0x0F;
+        uint8_t mod = registers_get_mode(p->reg);
+        uint32_t addr = registers_read(p->reg, source, mod);
+        uint8_t *value;
+        memory_read_byte(p->mem, addr, &value);
+        
+        for(int i = 0; i < 16; i ++){
+            k = (ins >> i);
+            if(k == 1){
+                registers_write(p->reg, i, mod, *value);
+                value++;
+            }
+        } 
         //mais en faisant attention au mode de reecriture du registre 
     }
-}//mais comment parcourir la liste ou même comment lire le mode, idfk 
+}//mais comment lire le mode, idfk 
 
 
 
