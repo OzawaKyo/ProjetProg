@@ -35,24 +35,109 @@ Contact: Guillaume.Huard@imag.fr
 #define ROTATE_RIGHT 0x03
 
 /* Data processing instructions */	
-uint32_t And(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+uint32_t And(arm_core p, uint8_t s ,uint8_t rn  , uint8_t rd , uint32_t op2 , uint8_t carry_out) {
+	
+	uint32_t src = arm_read_register(p,rn);
+	uint32_t dest = arm_read_register(p,rd);
+	
+	uint8_t c = carry_out;
+	uint8_t n = (dest >> 31) & 0x01;
+	uint8_t z = (dest == 0) ? 1 : 0;
+
+	if (s==1 && rd == 15){
+		if (arm_current_mode_has_spsr(p))
+		{
+			arm_write_cpsr(p,arm_read_spsr(p)); 
+		}
+	}
+	else if(s==1){
+		uint32_t new_cpsr = registers_read_cpsr(p->reg) & 0x0FFFFFFF | (c << 29) | (n << 31) | (z << 30);
+		registers_write_cpsr(p->reg, new_cpsr);
+	}
+	
 	dest = src & op2;
+	
 	return dest ;
 }	
 
-uint32_t Eor(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+uint32_t Eor(arm_core p, uint8_t s ,uint8_t rn  , uint8_t rd , uint32_t op2 , uint8_t carry_out) {
+	
+	uint32_t src = arm_read_register(p,rn);
+	uint32_t dest = arm_read_register(p,rd);
+
+	uint8_t n = (dest >> 31) & 0x01;
+	uint8_t z = (dest == 0) ? 1 : 0;
+	uint8_t c = carry_out;
+
+	if (s==1 && rd == 15){
+		if (arm_current_mode_has_spsr(p))
+		{
+			arm_write_cpsr(p,arm_read_spsr(p)); 
+		}
+	}
+	else if(s==1){
+		uint32_t new_cpsr = registers_read_cpsr(p->reg) & 0x0FFFFFFF | (c << 29) | (n << 31) | (z << 30);
+		registers_write_cpsr(p->reg, new_cpsr);
+	}
+	
 	dest = src ^ op2;
+	
 	return dest ;
 }
-uint32_t Sub(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+uint32_t Sub(arm_core p, uint8_t s ,uint8_t rn  , uint8_t rd , uint32_t op2 , uint8_t carry_out) {
+	
+	uint32_t src = arm_read_register(p,rn);
+	uint32_t dest = arm_read_register(p,rd);
+
+	uint8_t n = (dest >> 31) & 0x01;
+	uint8_t z = (dest == 0) ? 1 : 0;
+	//C Flag = NOT BorrowFrom(Rn - shifter_operand)
+	uint8_t c =(src < op2) ? 0 : 1;
+	// V Flag = OverflowFrom(Rn - shifter_operand)
+	uint8_t v = ((src ^ op2) & (src ^ dest) & 0x80000000) ? 1 : 0;
+	
+	if (s==1 && rd == 15){
+			if (arm_current_mode_has_spsr(p))
+			{
+				arm_write_cpsr(p,arm_read_spsr(p)); 
+			}
+		}
+	else if(s==1){
+		uint32_t new_cpsr = registers_read_cpsr(p->reg) & 0x0FFFFFFF | (c << 29) | (n << 31) | (z << 30) | (v << 28);
+		registers_write_cpsr(p->reg, new_cpsr);
+	}
+
 	dest = src - op2;
+	
 	return dest ;
 }
+
 uint32_t Rsb(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
 	dest = op2 - src;
 	return dest ;
 }
-uint32_t Add(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
+uint32_t Add(arm_core p, uint8_t s ,uint8_t rn  , uint8_t rd , uint32_t op2 , uint8_t carry_out) {
+
+	uint32_t src = arm_read_register(p,rn);
+	uint32_t dest = arm_read_register(p,rd);
+
+	uint8_t n = (dest >> 31) & 0x01;
+	uint8_t z = (dest == 0) ? 1 : 0;
+	//C Flag = CarryFrom(Rn + shifter_operand)
+	uint8_t c = (src + op2) < src ? 1 : 0;
+	uint8_t v;
+	
+	if (s==1 && rd == 15){
+			if (arm_current_mode_has_spsr(p))
+			{
+				arm_write_cpsr(p,arm_read_spsr(p)); 
+			}
+		}
+	else if(s==1){
+		uint32_t new_cpsr = registers_read_cpsr(p->reg) & 0x0FFFFFFF | (c << 29) | (n << 31) | (z << 30) | (v << 28);
+		registers_write_cpsr(p->reg, new_cpsr);
+	}
+
 	dest = src + op2;
 	return dest ;
 }
@@ -102,32 +187,57 @@ uint32_t Mvn(arm_core p, uint32_t src , uint32_t dest , uint32_t op2) {
 	return dest ;
 }
 
-uint32_t shift(arm_core p, uint32_t ins) {
+uint32_t shift(arm_core p, uint32_t ins, uint8_t *carry_out) {
 	uint32_t value;
 	uint32_t rm = ins & 0x0F;
 	uint8_t shift = (ins >> 4) & 0x01;
 	uint8_t mode;
 	uint8_t reg_imm;
 
+	uint8_t carry = (registers_read_cpsr(p->reg) >> 29) & 0x01;
+
 	if (shift == 0) {
 		mode = (ins >> 5) & 0x03;
-		reg_imm = (ins >> 7) & 0x1F;
-		value = arm_read_register(p,rm);
-		if (mode == 0 && reg_imm == 0)
+		reg_imm = (ins >> 7) & 0x1F; // shift_imm
+		value = arm_read_register(p,rm); // on prend la valeur du registre dans rm
+		if (mode == 0 && reg_imm == 0) {
+			*carry_out = carry;
 			return value;
+		}
 		switch (mode)
 		{
 		case LOGICAL_LEFT_SHIFT:
 			value = value << reg_imm;
+			if (reg_imm == 0)
+				*carry_out = carry;
+			else
+				*carry_out = (arm_read_register(p, rm) >> (32 - reg_imm)) & 0x01;
 			break;
 		case LOGICAL_RIGH_SHIFT:
 			value = value >> reg_imm;
+			if (reg_imm == 0)
+				*carry_out = get_bit(arm_read_register(p, rm), 31);
+			else
+				*carry_out = (arm_read_register(p, rm) >> (reg_imm -1)) & 0x01;
 			break;
 		case ARITHMETIC_RIGH_SHIFT:
 			value = asr(value, reg_imm);
+			if (reg_imm == 0){
+				if (get_bit(arm_read_register(p, rm), 31) == 0) {
+					*carry_out = get_bit(arm_read_register(p, rm), 31);
+				} else {
+					*carry_out = get_bit(arm_read_register(p, rm),31);
+				}
+			} else {
+				*carry_out = (arm_read_register(p, rm) >> (reg_imm -1)) & 0x01;		
+		}	
 			break;
 		case ROTATE_RIGHT:
 			value = ror(value, reg_imm);
+			if (reg_imm == 0)
+				*carry_out = get_bit(arm_read_register(p,rm), 0);
+			else
+				*carry_out = (arm_read_register(p, rm) >> (reg_imm -1)) & 0x01;
 			break;
 		default:
 			value = 0;
@@ -135,22 +245,52 @@ uint32_t shift(arm_core p, uint32_t ins) {
 		}
 	} else {
 		mode = (ins >> 5) & 0x03;
-		reg_imm = (ins >> 8) & 0x0F;
+		reg_imm = (ins >> 8) & 0x0F; // rs
 		value = arm_read_register(p,rm);
 		reg_imm = arm_read_register(p, reg_imm);
 		switch (mode)
 		{
 		case LOGICAL_LEFT_SHIFT:
 			value = value << reg_imm;
+			if (reg_imm == 0)
+				*carry_out = carry;
+			else if (reg_imm < 32)
+				*carry_out = get_bit(arm_read_register(p,rm), 32 - reg_imm);
+			else if (reg_imm == 32)
+				*carry_out = get_bit(arm_read_register(p,rm), 0);
+			else
+				*carry_out = 0;
 			break;
 		case LOGICAL_RIGH_SHIFT:
 			value = value >> reg_imm;
+			if (reg_imm == 0)
+				*carry_out = carry;
+			else if (reg_imm < 32)
+				*carry_out = get_bit(arm_read_register(p,rm),reg_imm - 1);
+			else if (reg_imm == 32)
+				*carry_out = get_bit(arm_read_register(p,rm), 31);
+			else
+				*carry_out = 0;
 			break;
 		case ARITHMETIC_RIGH_SHIFT:
 			value = asr(value, reg_imm);
+			if (reg_imm == 0)
+				*carry_out = carry;
+			else if (reg_imm < 32)
+				*carry_out = get_bit(arm_read_register(p,rm),reg_imm - 1);
+			else {
+				*carry_out = 0;
+				if (get_bit(arm_read_register(p,rm), 31) == 0)
+					value = 0;
+				else
+					value = 0xFFFFFFFF;
+			}
 			break;
 		case ROTATE_RIGHT:
 			value = ror(value, reg_imm);
+			if (reg_imm == 0)
+				*carry_out = carry;
+			else if (reg_imm )
 			break;
 		default:
 			value = 0;
@@ -169,11 +309,12 @@ int arm_data_processing_shift(arm_core p, uint32_t ins) {
 	uint32_t src = arm_read_register(p,rn);
 	uint32_t dest = arm_read_register(p,rd);
 	uint32_t rm = shift(p,ins);
+	uint8_t s = (ins >> 20) & 0x01;
 
 
 	switch (opcode) {
 	case 0x0:
-		arm_write_register(p,rd,And(p, src , dest, rm));
+		arm_write_register(p,rd,And(p, src ,s, dest, rm));
 		break;
 	case 0x1:
 		arm_write_register(p,rd,Eor(p, src , dest, rm));
@@ -243,7 +384,7 @@ int arm_data_processing_shift(arm_core p, uint32_t ins) {
 	return 0;
 }
 
-uint32_t rotate(uint32_t ins){
+uint32_t rotate(uint32_t ins, uint8_t *carry_out){
 	uint8_t immed_8 = ins & 0xFF;
 	uint8_t rotate_imm = (ins >> 8) & 0x0F;
 	uint32_t immediate = (immed_8 >> (2 * rotate_imm)) | (immed_8 << (32 - 2 * rotate_imm));
@@ -255,13 +396,12 @@ int arm_data_processing_immediate_msr(arm_core p, uint32_t ins) {
 	uint8_t rn = (ins >> 16) & 0x0F;
 	uint8_t rd = (ins >> 12) & 0x0F;
 
-	uint32_t src = arm_read_register(p,rn);
-	uint32_t dest = arm_read_register(p,rd);
+
 	uint32_t immediate = rotate(ins);
 
 	switch (opcode) {
 	case 0x0:
-		arm_write_register(p,rd,And(p, src , dest, immediate));
+		arm_write_register(p,rd,And(p, s, rn, rd, immediate));
 		break;
 	case 0x1:
 		arm_write_register(p,rd,Eor(p, src , dest, immediate));

@@ -1,24 +1,24 @@
 /*
-Armator - simulateur de jeu d'instruction ARMv5T à but pédagogique
+Armator - simulateur de jeu d'instruction ARMv5T ï¿½ but pï¿½dagogique
 Copyright (C) 2011 Guillaume Huard
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software
-Foundation (version 2 ou bien toute autre version ultérieure choisie par vous).
+termes de la Licence Publique Gï¿½nï¿½rale GNU publiï¿½e par la Free Software
+Foundation (version 2 ou bien toute autre version ultï¿½rieure choisie par vous).
 
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE
+Ce programme est distribuï¿½ car potentiellement utile, mais SANS AUCUNE
 GARANTIE, ni explicite ni implicite, y compris les garanties de
-commercialisation ou d'adaptation dans un but spécifique. Reportez-vous à la
-Licence Publique Générale GNU pour plus de détails.
+commercialisation ou d'adaptation dans un but spï¿½cifique. Reportez-vous ï¿½ la
+Licence Publique Gï¿½nï¿½rale GNU pour plus de dï¿½tails.
 
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même
-temps que ce programme ; si ce n'est pas le cas, écrivez à la Free Software
+Vous devez avoir reï¿½u une copie de la Licence Publique Gï¿½nï¿½rale GNU en mï¿½me
+temps que ce programme ; si ce n'est pas le cas, ï¿½crivez ï¿½ la Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
-États-Unis.
+ï¿½tats-Unis.
 
 Contact: Guillaume.Huard@imag.fr
-	 Bâtiment IMAG
+	 Bï¿½timent IMAG
 	 700 avenue centrale, domaine universitaire
-	 38401 Saint Martin d'Hères
+	 38401 Saint Martin d'Hï¿½res
 */
 #ifndef __ARM_CONSTANTS_H__
 #define __ARM_CONSTANTS_H__
@@ -65,9 +65,31 @@ Contact: Guillaume.Huard@imag.fr
 #define UnallocMask 0x0FFFFF00
 #define UserMask    0xF0000000
 #define PrivMask    0x0000000F
-#define StateMask   0x00000020
+
+
+#define StateMask   0x00000020/*Condition types mask*/
+
+
+#define EQ 0x0 //Z set
+#define NE 0x1 //Z clear
+#define CS 0x2 //C set
+#define CC 0x3 //C clear
+#define MI 0x4 //N set
+#define PL 0x5 //N clear
+#define VS 0x6 //V set
+#define VC 0x7 //V clear
+#define HI 0x8 //C set && Z clear
+#define LS 0x9 //C clear || Z set
+#define GE 0xA //(N set && V set) || (N clear && V clear)
+#define LT 0xB //(N set && V clear) || (N clear && V set)
+#define GT 0xC //Z clear && ((N set && V set) || (N clear && V clear))
+#define LE 0xD //Z set || ((N set && V clear) || (N clear && V set))
+#define AL 0xE //Always
+
+uint8_t arm_get_cond_field_check(uint32_t instruction);
 
 char *arm_get_exception_name(unsigned char exception);
+
 char *arm_get_mode_name(uint8_t mode);
 int8_t arm_get_mode_number(char *name);
 char *arm_get_register_name(uint8_t reg);
