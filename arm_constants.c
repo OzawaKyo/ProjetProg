@@ -23,6 +23,8 @@ Contact: Guillaume.Huard@imag.fr
 #include <stdlib.h>
 #include <string.h>
 #include "arm_constants.h"
+#include "arm_core.h" //for check_cond
+
 
 static char *arm_mode_names[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, "USR", "FIQ", "IRQ", "SVC", 0, 0, 0,
@@ -45,9 +47,9 @@ static char *arm_exception_names[] = { NULL,
     "software interrupt",
 };
 
-uint8_t arm_get_cond_field_check(uint32_t instruction){
+uint8_t arm_check_cond(arm_core p,uint32_t instruction){
     uint32_t cond = (instruction >> 28) & 0xF;
-    uint32_t nzcv = (registers_read_cpsr(p->reg) >> 28) & 0xF;
+    uint32_t nzcv = (arm_read_cpsr(p) >> 28) & 0xF;
     uint32_t neg = (nzcv >> 3) & 0x1;
     uint32_t zero = (nzcv >> 2) & 0x1;
     uint32_t carry = (nzcv >> 1) & 0x1;

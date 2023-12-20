@@ -85,9 +85,9 @@ Contact: Guillaume.Huard@imag.fr
 #define GT 0xC //Z clear && ((N set && V set) || (N clear && V clear))
 #define LE 0xD //Z set || ((N set && V clear) || (N clear && V set))
 #define AL 0xE //Always
-#define UN 0xF //depends on architecture
+#define UN 0xF //depends on ARM version
 
-uint8_t arm_get_cond_field_check(uint32_t instruction);
+uint8_t arm_check_cond(arm_core p, uint32_t instruction);
 
 char *arm_get_exception_name(unsigned char exception);
 

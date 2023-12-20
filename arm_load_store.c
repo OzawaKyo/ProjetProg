@@ -42,6 +42,9 @@ Contact: Guillaume.Huard@imag.fr
 
 
 int arm_load_store(arm_core p, uint32_t ins) {
+    if(ins == NULL || p == NULL){
+        return -1;
+    }
     uint32_t ls = (ins >> 20) & 1; // Extract bit L (Load if set || Store if unset) from instruction
     switch (ls)
     {
@@ -58,6 +61,9 @@ int arm_load_store(arm_core p, uint32_t ins) {
 }
 
 int store(arm_core p, uint32_t ins){
+    if(ins == NULL || p == NULL){
+        return -1;
+    }
     uint32_t x = (ins >> 22) & 1; // Extract bit B (Unsigned byte access if set || Word access if unset) from instruction
     switch (x)
     {
@@ -77,6 +83,9 @@ int store(arm_core p, uint32_t ins){
 
 
 int load(arm_core p, uint32_t ins){
+    if(ins == NULL || p == NULL){
+        return -1;
+    }
     uint32_t x = (ins >> 22) & 1; // Extract bit B (Unsigned byte access if set || Word access if unset) from instruction
     switch (x) {
         case 0:
@@ -92,7 +101,9 @@ int load(arm_core p, uint32_t ins){
 }
 
 int str(arm_core p, uint32_t ins){
-
+    if(ins == NULL || p == NULL){
+        return -1;
+    }
     uint8_t source = (ins >> 16) & 0x0F;
 	uint8_t dest = (ins >> 12) & 0x0F;
     //uint32_t cond = (ins >> 28); // necessaire ?
@@ -101,7 +112,9 @@ int str(arm_core p, uint32_t ins){
     uint32_t v_dest = registers_read(p->reg, dest, mod);
     uint32_t v_source = registers_read(p->reg, source, mod);
 
-    memory_write_word(p->mem, v_dest, v_source, is_big_endian());
+    if(!(memory_write_word(p->mem, v_dest, v_source, is_big_endian()))){
+        return -1;
+    }
     return 0;
 }
 
@@ -122,6 +135,9 @@ int strb_strh(arm_core p, uint32_t ins){
 }
 
 int strb(arm_core p, uint32_t ins){
+    if(ins == NULL || p == NULL){
+        return -1;
+    }
     uint8_t source = (ins >> 16) & 0x0F;
 	uint8_t dest = (ins >> 12) & 0x0F;
     //uint32_t cond = (ins >> 28) & 0x1F; // necessaire ?
@@ -130,22 +146,27 @@ int strb(arm_core p, uint32_t ins){
     uint32_t v_dest = registers_read(p->reg, dest, mod);
     uint32_t v_source = registers_read(p->reg, source, mod);
 
-    memory_write_byte(p->mem, v_dest, v_source);    
+    if(!(memory_write_byte(p->mem, v_dest, v_source))){
+        return -1;
+    }
     return 0;
 }
 
 int strh(arm_core p, uint32_t ins){
+    if(ins == NULL || p == NULL){
+        return -1;
+    }
     uint8_t source = (ins >> 16) & 0x0F;
 	uint8_t dest = (ins >> 12) & 0x0F;
     //uint32_t cond = (ins >> 28) & 0x1F; // necessaire ?
-
-    uint8_t be = is_big_endian();
     
     mode_t mod = registers_get_mode(p->reg);
     uint32_t v_dest = registers_read(p->reg, dest, mod);
     uint32_t v_source = registers_read(p->reg, source, mod);
 
-    memory_write_half(p->mem, v_dest, v_source, be);
+    if(!(memory_write_half(p->mem, v_dest, v_source, is_big_endian()))){
+        return -1;
+    }
     return 0;
 }
 
@@ -154,6 +175,9 @@ int strh(arm_core p, uint32_t ins){
 
 
 int ldrb_ldrh(arm_core p, uint32_t ins) {
+    if(ins == NULL || p == NULL){
+        return -1;
+    }
     uint32_t x = (ins >> 26) & 1; // Extract bit ???
     switch (x) {
         case 1:
@@ -170,7 +194,9 @@ int ldrb_ldrh(arm_core p, uint32_t ins) {
 
 
 int ldr(arm_core p, uint32_t ins) {
-    
+    if(ins == NULL || p == NULL){
+        return -1;
+    }
     uint8_t source = (ins >> 16) & 0x0F;
     uint8_t dest = (ins >> 12) & 0x0F;
     //uint32_t cond = (ins >> 28) & 0x1F;
@@ -180,7 +206,10 @@ int ldr(arm_core p, uint32_t ins) {
     uint8_t be = is_big_endian();
     uint32_t v_source = registers_read(p->reg, source, mode);
  
-    memory_read_word(p->mem, v_source, &value, be);
+    if(!(memory_read_word(p->mem, v_source, &value, be))){
+        return -1;
+    }
+
     registers_write(p->reg, dest, mode, value); 
 
     return 0;
@@ -189,7 +218,9 @@ int ldr(arm_core p, uint32_t ins) {
 
 
 int ldrb(arm_core p, uint32_t ins) {
-    
+    if(ins == NULL || p == NULL){
+        return -1;
+    }
     uint8_t source = (ins >> 16) & 0x0F;
     uint8_t dest = (ins >> 12) & 0x0F;
     //uint32_t cond = (ins >> 28) & 0x1F;
@@ -197,7 +228,10 @@ int ldrb(arm_core p, uint32_t ins) {
     uint8_t mode = registers_get_mode(p->reg);
     uint8_t value;
 
-    memory_read_byte(p->mem, source, &value);
+    if(!(memory_read_byte(p->mem, source, &value))){
+        return -1;
+    }
+
     registers_write(p->reg, dest, mode, value); 
 
     return 0;
@@ -206,7 +240,9 @@ int ldrb(arm_core p, uint32_t ins) {
 
 
 int ldrh(arm_core p, uint32_t ins) {
-    
+    if(ins == NULL || p == NULL){
+        return -1;
+    }
     uint8_t source = (ins >> 16) & 0x0F;
     uint8_t dest = (ins >> 12) & 0x0F;
     //uint32_t cond = (ins >> 28) & 0x1F;
@@ -215,9 +251,10 @@ int ldrh(arm_core p, uint32_t ins) {
     uint16_t value;
     uint8_t be = is_big_endian();
     
-    memory_read_half(p->mem, source, &value, be);
+    if(!(memory_read_half(p->mem, source, &value, be))){
+        return -1;
+    }
     registers_write(p->reg, dest, mode, value); 
-
     return 0;
 
 }
@@ -225,6 +262,9 @@ int ldrh(arm_core p, uint32_t ins) {
 
 
 int arm_load_store_multiple(arm_core p, uint32_t ins) {
+    if(ins == NULL || p == NULL){
+        return -1;
+    }
      uint32_t ls = (ins >> 20) & 1; // Extract bit L from instruction
     switch (ls)
     {
@@ -241,7 +281,9 @@ int arm_load_store_multiple(arm_core p, uint32_t ins) {
 }
 
 int stm(arm_core p, uint32_t ins){
-    //y a un mode d'adressage à prendre en compte MAIS JE LE TROUVE PAAAAAAAAS !!! Ok si avec P U et W ... MAIS JE SAIS PAS à QUOI çA SE REFERE !! ou alors j'ai tout faux 
+    if(ins == NULL || p == NULL){
+        return -1;
+    }
    uint32_t b = (ins >> 22) & 1;
     if(b == 0){
         uint32_t k;
@@ -260,26 +302,34 @@ int stm(arm_core p, uint32_t ins){
                 if ((bitP == 0) & (bitU == 0)) {
                     // on est dans le mode DA
                     value = registers_read(p->reg, i, mod);
-                    memory_write_byte(p->mem, addr, value);
+                    if(!(memory_write_byte(p->mem, addr, value))){
+                        return -1;
+                    }
                     addr--;                    
 
                 } else if ((bitP == 0) & (bitU == 1)) {
                     // on est dans le mode IA
                     value = registers_read(p->reg, i, mod);
-                    memory_write_byte(p->mem, addr, value);
+                    if(!(memory_write_byte(p->mem, addr, value))){
+                        return -1;
+                    }
                     addr++;
 
                 } else if ((bitP == 1) & (bitU == 0)) {
                     // on est dans le mode DB
                     addr--;
                     value = registers_read(p->reg, i, mod);
-                    memory_write_byte(p->mem, addr, value);
+                    if(!(memory_write_byte(p->mem, addr, value))){
+                        return -1;
+                    }
                     
                 } else {
-                    // mode IB
+                    // on est dans le mode IB
                     addr++;
                     value = registers_read(p->reg, i, mod);
-                    memory_write_byte(p->mem, addr, value);
+                    if(!(memory_write_byte(p->mem, addr, value))){
+                        return -1;
+                    }
                 }  
             }
         } 
@@ -288,6 +338,9 @@ int stm(arm_core p, uint32_t ins){
 }
 
 int ldm(arm_core p, uint32_t ins){
+    if(ins == NULL || p == NULL){
+        return -1;
+    }
     uint32_t b = (ins >> 22) & 1;
     
     if(b == 0){
@@ -299,7 +352,9 @@ int ldm(arm_core p, uint32_t ins){
         uint8_t mod = registers_get_mode(p->reg);
         uint32_t addr = registers_read(p->reg, source, mod);
         uint8_t value;
-        memory_read_byte(p->mem, addr, &value);
+        if(!(memory_read_byte(p->mem, addr, &value))){
+            return -1;
+        }
         
         for(int i = 0; i < 15; i ++){
             k = (ins >> i) & 1;
