@@ -329,10 +329,9 @@ int ldm(arm_core p, uint32_t ins){
                 }               
             }
         } 
-        //mais en faisant attention au mode de reecriture du registre 
     }
     return 0;
-}//mais comment lire le mode, idfk 
+}
 
 
 
