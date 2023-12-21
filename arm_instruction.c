@@ -44,7 +44,7 @@ static int arm_execute_instruction(arm_core p) {
     if (result != 0) {
         return result;
     }
-    uint32_t type = (instruction >> 25) & 0x07; // Extract type from instruction
+    uint32_t type = (instruction >> 25) & 0x07; //Extract type from instruction
 
     switch (type) {
         case ARM_TYPE_DATA_PROCESSING:

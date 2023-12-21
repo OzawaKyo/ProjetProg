@@ -23,6 +23,7 @@ Contact: Guillaume.Huard@imag.fr
 #ifndef __ARM_CONSTANTS_H__
 #define __ARM_CONSTANTS_H__
 #include <stdint.h>
+#include "arm_core.h"
 
 /* ARM Modes */
 #define USR 0x10

@@ -40,6 +40,8 @@ Contact: Guillaume.Huard@imag.fr
 #define ARM_INS_STRB_STRH 1
 //#define ARM_INS_STRH
 
+//TODO: Eliminer la redondance !
+
 
 int arm_load_store(arm_core p, uint32_t ins) {
     if(ins == NULL || p == NULL){
@@ -157,11 +159,13 @@ int str(arm_core p, uint32_t ins){
         
         uint8_t Rm = (ins >> 0) & 0x04;
         uint32_t offset = arm_read_register(p->reg, Rm);
+        
 
         if(scaled != 0){ // on est dans le scaled register
 
             uint32_t shift = (ins >> 5) & 2;
             uint32_t shift_imm = (ins >> 7) & 5;
+            int index;
 
             if(bitP == 0){ //post_indexé 
                 if (bitW == 0) {
@@ -170,27 +174,30 @@ int str(arm_core p, uint32_t ins){
                         case 0b00:
                             // LSL
                             // index = Rm Logical_Shift_Left shift_imm
+                            index = (Rm << shift_imm);
                             break;
                         case 0b01:
                             // LSR
                             if (shift_imm == 0) {
-                                // index = 0;
+                                index = 0;
                             } else {
-                                // index = Rm Logical_Shift_Right shift_imm
+                                //index = Rm Logical_Shift_Right shift_imm
+                                index = (Rm >> shift_imm);
                             }
                             break;
                         case 0b10:
                             // ASR
                             if (shift_imm == 0) {
-                                /*
-                                if (Rm[31] == 1) {
-                                    // index = 0xFFFFFFFF;
+                                
+                                /*if (p->reg->Rm[31] == 1) {
+                                    index = 0xFFFFFFFF;
                                 } else {
-                                    // index = 0;
-                                }
-                                */
+                                    index = 0;
+                                }*/
+                                
                             } else {
                                 // index = Rm Arithmetic_Shift_Right shift_imm
+                                index = asr(Rm, shift_imm);
                             }
                             break;
                         case 0b11:
@@ -198,9 +205,11 @@ int str(arm_core p, uint32_t ins){
                             if (shift_imm == 0) {
                                 /* RRX */
                                 //index = (C Flag Logical_Shift_Left 31) OR (Rm Logical_Shift_Right 1)
+                                index = (Rm >> 1);
                             } else {
                                 /* ROR */
                                 //index = Rm Rotate_Right shift_imm
+                                index = ror(Rm, shift_imm);
                             }
                             break;
                         default:
@@ -208,28 +217,122 @@ int str(arm_core p, uint32_t ins){
 
                         }
                     if (bitU == 1) {
-                        //v_source = v_source + index;
+                        v_source = v_source + index;
                     } else {
-                        // v_source = v_source - index;
+                        v_source = v_source - index;
                     }
                 }
 
             } else { // bitP = 1
                 // 
                 if(bitW == 0){ //offset
+
+                switch (shift) {
+                        case 0b00:
+                            // LSL
+                            // index = Rm Logical_Shift_Left shift_imm
+                            index = (Rm << shift_imm);
+                            break;
+                        case 0b01:
+                            // LSR
+                            if (shift_imm == 0) {
+                                index = 0;
+                            } else {
+                                //index = Rm Logical_Shift_Right shift_imm
+                                index = (Rm >> shift_imm);
+                            }
+                            break;
+                        case 0b10:
+                            // ASR
+                            if (shift_imm == 0) {
+                                
+                                /*if (p->reg->Rm[31] == 1) {
+                                    index = 0xFFFFFFFF;
+                                } else {
+                                    index = 0;
+                                }*/
+                                
+                            } else {
+                                // index = Rm Arithmetic_Shift_Right shift_imm
+                                index = asr(Rm, shift_imm);
+                            }
+                            break;
+                        case 0b11:
+                           /* ROR or RRX */
+                            if (shift_imm == 0) {
+                                /* RRX */
+                                //index = (C Flag Logical_Shift_Left 31) OR (Rm Logical_Shift_Right 1)
+                                index = (Rm >> 1);
+                            } else {
+                                /* ROR */
+                                //index = Rm Rotate_Right shift_imm
+                                index = ror(Rm, shift_imm);
+                            }
+                            break;
+                        default:
+                            break;
+                }
                     if (bitU == 1) {
-                        
+                        address = v_source + index;
                     } else {
-                        
+                        address = v_source - index;
                     }                    
                 } else { // pre_indexé
+
+                switch (shift) {
+                        case 0b00:
+                            // LSL
+                            // index = Rm Logical_Shift_Left shift_imm
+                            index = (Rm << shift_imm);
+                            break;
+                        case 0b01:
+                            // LSR
+                            if (shift_imm == 0) {
+                                index = 0;
+                            } else {
+                                //index = Rm Logical_Shift_Right shift_imm
+                                index = (Rm >> shift_imm);
+                            }
+                            break;
+                        case 0b10:
+                            // ASR
+                            if (shift_imm == 0) {
+                                
+                                /*if (p->reg->Rm[31] == 1) {
+                                    index = 0xFFFFFFFF;
+                                } else {
+                                    index = 0;
+                                }*/
+                                
+                            } else {
+                                // index = Rm Arithmetic_Shift_Right shift_imm
+                                index = asr(Rm, shift_imm);
+                            }
+                            break;
+                        case 0b11:
+                           /* ROR or RRX */
+                            if (shift_imm == 0) {
+                                /* RRX */
+                                //index = (C Flag Logical_Shift_Left 31) OR (Rm Logical_Shift_Right 1)
+                                index = (Rm >> 1);
+                            } else {
+                                /* ROR */
+                                //index = Rm Rotate_Right shift_imm
+                                index = ror(Rm, shift_imm);
+                            }
+                            break;
+                        default:
+                            break;
+                }
                     if (bitU == 1) {
-                        
+                        address = v_source + index;
                     } else {
-                        
-                    }
-                    
-                }          
+                        address = v_source - index;
+                    }  
+                    //la diff avec offset serait la COND 
+                    //if cond passed then (rn = addr);
+                } 
+                         
             }
             
         } else { // register
@@ -238,9 +341,9 @@ int str(arm_core p, uint32_t ins){
                 if (bitW == 0) {
                     address = v_source;
                     if (bitU == 1) {
-                        v_source = v_source + offset;
+                        address = v_source + offset;
                     } else {
-                        v_source = v_source - offset;
+                        address = v_source - offset;
                     }
                 }
             } else {
@@ -323,10 +426,6 @@ int strh(arm_core p, uint32_t ins){
     return 0;
 }
 
-
-
-
-
 int ldrb_ldrh(arm_core p, uint32_t ins) {
     if(ins == NULL || p == NULL){
         return -1;
@@ -344,7 +443,6 @@ int ldrb_ldrh(arm_core p, uint32_t ins) {
     }
     return 0;
 }
-
 
 int ldr(arm_core p, uint32_t ins) {
     if(ins == NULL || p == NULL){
@@ -406,8 +504,6 @@ int ldrh(arm_core p, uint32_t ins) {
     return 0;
 
 }
-
-
 
 int arm_load_store_multiple(arm_core p, uint32_t ins) {
     if(ins == NULL || p == NULL){
