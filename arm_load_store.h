@@ -41,6 +41,9 @@ int ldrb(arm_core p, uint32_t ins);
 int ldrh(arm_core p, uint32_t ins);
 int stm(arm_core p, uint32_t ins);
 int ldm(arm_core p, uint32_t ins);
+uint32_t post_indexe(arm_core p, uint32_t ins);
+uint32_t pre_indexe(arm_core p, uint32_t ins);
+uint32_t offset(arm_core p, uint32_t ins);
 
 
 #endif

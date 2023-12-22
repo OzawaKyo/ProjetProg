@@ -43,6 +43,7 @@ Contact: Guillaume.Huard@imag.fr
 //TODO: Eliminer la redondance !
 
 
+
 int arm_load_store(arm_core p, uint32_t ins) {
     if(ins == 0 || p == NULL){
         return -1;
@@ -102,6 +103,8 @@ int load(arm_core p, uint32_t ins){
     return 0;
 }
 
+
+
 int str(arm_core p, uint32_t ins){
     if(ins == 0 || p == NULL){
         return -1;
@@ -158,14 +161,14 @@ int str(arm_core p, uint32_t ins){
     } else { 
         
         uint8_t Rm = (ins >> 0) & 0x04;
-        uint32_t offset = arm_read_register(p, Rm);
+        uint32_t offset = arm_read_register(p->reg, Rm);
         
 
         if(scaled != 0){ // on est dans le scaled register
 
             uint32_t shift = (ins >> 5) & 2;
             uint32_t shift_imm = (ins >> 7) & 5;
-            int index;
+            uint32_t index;
 
             if(bitP == 0){ //post_indexé 
                 if (bitW == 0) {
@@ -174,7 +177,7 @@ int str(arm_core p, uint32_t ins){
                         case 0b00:
                             // LSL
                             // index = Rm Logical_Shift_Left shift_imm
-                            index = (Rm << shift_imm);
+                            index = (offset << shift_imm);
                             break;
                         case 0b01:
                             // LSR
@@ -182,13 +185,13 @@ int str(arm_core p, uint32_t ins){
                                 index = 0;
                             } else {
                                 //index = Rm Logical_Shift_Right shift_imm
-                                index = (Rm >> shift_imm);
+                                index = (offset >> shift_imm);
                             }
                             break;
                         case 0b10:
                             // ASR
                             if (shift_imm == 0) {
-                                uint8_t g = (arm_read_register(p->reg, Rm) >> 31) & 1;
+                                uint8_t g = (offset >> 31) & 1;
                                 if (g == 1) {
                                     index = 0xFFFFFFFF;
                                 } else {
@@ -197,7 +200,7 @@ int str(arm_core p, uint32_t ins){
                                 
                             } else {
                                 // index = Rm Arithmetic_Shift_Right shift_imm
-                                index = asr(Rm, shift_imm);
+                                index = asr(offset, shift_imm);
                             }
                             break;
                         case 0b11:
@@ -205,11 +208,11 @@ int str(arm_core p, uint32_t ins){
                             if (shift_imm == 0) {
                                 /* RRX */
                                 //index = (C Flag Logical_Shift_Left 31) OR (Rm Logical_Shift_Right 1)
-                                index = (Rm >> 1);
+                                index = (offset >> 1);
                             } else {
                                 /* ROR */
                                 //index = Rm Rotate_Right shift_imm
-                                index = ror(Rm, shift_imm);
+                                index = ror(offset, shift_imm);
                             }
                             break;
                         default:
@@ -231,7 +234,7 @@ int str(arm_core p, uint32_t ins){
                         case 0b00:
                             // LSL
                             // index = Rm Logical_Shift_Left shift_imm
-                            index = (Rm << shift_imm);
+                            index = (offset << shift_imm);
                             break;
                         case 0b01:
                             // LSR
@@ -239,14 +242,14 @@ int str(arm_core p, uint32_t ins){
                                 index = 0;
                             } else {
                                 //index = Rm Logical_Shift_Right shift_imm
-                                index = (Rm >> shift_imm);
+                                index = (offset >> shift_imm);
                             }
                             break;
                         case 0b10:
                             // ASR
                             if (shift_imm == 0) {
                                 
-                                uint8_t g = (arm_read_register(p->reg, Rm) >> 31) & 1;
+                                uint8_t g = (offset >> 31) & 1;
                                 if (g == 1) {
                                     index = 0xFFFFFFFF;
                                 } else {
@@ -255,7 +258,7 @@ int str(arm_core p, uint32_t ins){
                                 
                             } else {
                                 // index = Rm Arithmetic_Shift_Right shift_imm
-                                index = asr(Rm, shift_imm);
+                                index = asr(offset, shift_imm);
                             }
                             break;
                         case 0b11:
@@ -263,11 +266,11 @@ int str(arm_core p, uint32_t ins){
                             if (shift_imm == 0) {
                                 /* RRX */
                                 //index = (C Flag Logical_Shift_Left 31) OR (Rm Logical_Shift_Right 1)
-                                index = (Rm >> 1);
+                                index = (offset >> 1);
                             } else {
                                 /* ROR */
                                 //index = Rm Rotate_Right shift_imm
-                                index = ror(Rm, shift_imm);
+                                index = ror(offset, shift_imm);
                             }
                             break;
                         default:
@@ -284,7 +287,7 @@ int str(arm_core p, uint32_t ins){
                         case 0b00:
                             // LSL
                             // index = Rm Logical_Shift_Left shift_imm
-                            index = (Rm << shift_imm);
+                            index = (offset << shift_imm);
                             break;
                         case 0b01:
                             // LSR
@@ -292,22 +295,23 @@ int str(arm_core p, uint32_t ins){
                                 index = 0;
                             } else {
                                 //index = Rm Logical_Shift_Right shift_imm
-                                index = (Rm >> shift_imm);
+                                index = (offset >> shift_imm);
                             }
                             break;
                         case 0b10:
                             // ASR
                             if (shift_imm == 0) {
                                 
-                                /*if (p->reg->Rm[31] == 1) {
+                                uint8_t g = (offset >> 31) & 1;
+                                if (g == 1) {
                                     index = 0xFFFFFFFF;
                                 } else {
                                     index = 0;
-                                }*/
+                                }
                                 
                             } else {
                                 // index = Rm Arithmetic_Shift_Right shift_imm
-                                index = asr(Rm, shift_imm);
+                                index = asr(offset, shift_imm);
                             }
                             break;
                         case 0b11:
@@ -319,7 +323,7 @@ int str(arm_core p, uint32_t ins){
                             } else {
                                 /* ROR */
                                 //index = Rm Rotate_Right shift_imm
-                                index = ror(Rm, shift_imm);
+                                index = ror(offset, shift_imm);
                             }
                             break;
                         default:
@@ -630,6 +634,16 @@ int ldm(arm_core p, uint32_t ins){
     }
     return 0;
 }
+
+
+
+uint32_t post_indexe(arm_core p, uint32_t ins);
+uint32_t pre_indexe(arm_core p, uint32_t ins);
+uint32_t offset(arm_core p, uint32_t ins);
+
+
+
+
 
 
 
