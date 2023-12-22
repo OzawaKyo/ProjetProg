@@ -1,0 +1,218 @@
+[33mcommit c43857aa39ec1f22fff299d68d5df65e6371e12f[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Arromatizey <chedadarromatizey@gmail.com>
+Date:   Fri Dec 22 13:24:35 2023 +0100
+
+    fix load store
+
+[33mcommit 578619355734c616ddc7b57d35aa244adbb3a161[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Fri Dec 22 13:12:31 2023 +0100
+
+    bit s update
+
+[33mcommit 9deb11c6ff80f4507ba5edac04b324dc9609ae9b[m
+Author: Bentoumi Hakim <bentoumh@im2ag-203-23.u-ga.fr>
+Date:   Fri Dec 22 12:19:08 2023 +0100
+
+    Dernier push avant l'audit du 22, data_processing devrait être bon avec es test
+
+[33mcommit f1b0511afbc2108263456cad57c1910394badf3e[m
+Author: Arromatizey <chedadarromatizey@gmail.com>
+Date:   Fri Dec 22 11:38:10 2023 +0100
+
+    adressing mode load store in progress
+
+[33mcommit ea3958fcb8f9f794fd51a53fb91ddb84b9036f13[m
+Author: Arromatizey <chedadarromatizey@gmail.com>
+Date:   Fri Dec 22 11:21:24 2023 +0100
+
+    adressing mode load store
+
+[33mcommit 540c2360cf535bceefa2d6e15df824b52a32d6f4[m
+Merge: 0bfdc5c 03a6aaf
+Author: Arromatizey <chedadarromatizey@gmail.com>
+Date:   Fri Dec 22 10:46:25 2023 +0100
+
+    Merge branch 'main' of https://github.com/OzawaKyo/ProjetProg into main
+
+[33mcommit 0bfdc5c5fa64d81c9db830ba76350addc46986f4[m
+Author: Arromatizey <chedadarromatizey@gmail.com>
+Date:   Fri Dec 22 10:46:21 2023 +0100
+
+    adressing mode str
+
+[33mcommit 03a6aaf38adf2f7076a9cc7d97a15674fc3fdccb[m
+Author: Ahlek <ahleksanael@gmail.com>
+Date:   Fri Dec 22 10:41:01 2023 +0100
+
+    Add condition check on instr and basic branch func. Amend some load-store ptr error
+
+[33mcommit 933371ca8ec4ee3f8bafa19bd0e816c3a83a3019[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Thu Dec 21 11:29:49 2023 +0100
+
+    matin j7
+
+[33mcommit 7d67cc916f17a3f360cf8f9b6ca25e4a5e44b64f[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Wed Dec 20 17:56:33 2023 +0100
+
+    j6
+
+[33mcommit f6e45b4b4b4d1681c6240c604c9eb5201a67e9a3[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Wed Dec 20 16:06:13 2023 +0100
+
+    j5 aprem
+
+[33mcommit db426e34ef8e02c211e32d66db9a1b39344c4fab[m
+Author: Ahlek <ahleksanael@gmail.com>
+Date:   Wed Dec 20 14:41:01 2023 +0100
+
+    Add arm_cond_field_check() to arm_constants
+
+[33mcommit 726ebb52532c41f0e9540b50ef8e5b361e6509da[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Wed Dec 20 14:21:13 2023 +0100
+
+    jour 5 matin
+
+[33mcommit f7430d08000c4ea2b0e55171c90595b36beae3d0[m
+Author: Arromatizey <chedadarromatizey@gmail.com>
+Date:   Wed Dec 20 14:20:23 2023 +0100
+
+    changement load_store
+
+[33mcommit 2704ad8eedebf421bb19073131e3078b830dcba0[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Tue Dec 19 17:42:23 2023 +0100
+
+    jour 4
+
+[33mcommit 02bacd816be088123d7434053eb6768e7dfa7a98[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Tue Dec 19 15:52:22 2023 +0100
+
+    on a fait des modifs, mais vaguement, ce commit sert à pouvoir continuer sans le liveshare
+
+[33mcommit 22fca86a795e7728e73f25468669fffd6b8614d7[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Tue Dec 19 15:29:31 2023 +0100
+
+    STM et LDM v1 : les fonction sont censées fonctionnée mais avec un mode par defaut, IA (increment after), in progress
+
+[33mcommit fe52e5b980745e766f442ae1efecf514d2174ba9[m
+Author: Arromatizey <chedadarromatizey@gmail.com>
+Date:   Tue Dec 19 14:07:39 2023 +0100
+
+    load_stores commentaires
+
+[33mcommit 91919842226efee0ae31956e69988d6b261d452a[m
+Merge: 2f068fe 2140a0a
+Author: Arromatizey <chedadarromatizey@gmail.com>
+Date:   Tue Dec 19 11:04:21 2023 +0100
+
+    Merge branch 'main' of https://github.com/OzawaKyo/ProjetProg into main
+
+[33mcommit 2f068fe0d1f37269b0b1c99c879ca0ef403f1351[m
+Author: Arromatizey <chedadarromatizey@gmail.com>
+Date:   Tue Dec 19 11:02:24 2023 +0100
+
+    arm_core corrigée, arm_load_store_multiple in progress
+
+[33mcommit 2140a0a30c7e2b4b98ed742c1c86245d6de3cc40[m
+Author: Ahlek <ahleksanael@gmail.com>
+Date:   Tue Dec 19 10:11:52 2023 +0100
+
+    Delete first commit build files and update .gitignore
+
+[33mcommit b35e3c799c7e003c6fccc05a7a204d7057b72378[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Mon Dec 18 16:56:04 2023 +0100
+
+    jour 3
+
+[33mcommit 55df2aa5a4b3ce9f0235f3721e8ace7e056b4255[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Mon Dec 18 13:45:39 2023 +0100
+
+    memory done
+
+[33mcommit 3ed41059ec75946944eebcd46db03cfa3d1042ad[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Mon Dec 18 12:01:15 2023 +0100
+
+    memory half done
+
+[33mcommit 1bcfcad0d73bd20558ed723b095846f0c3cb2169[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Fri Dec 15 17:44:12 2023 +0100
+
+    memory qui marche ... toujours pas du tout
+
+[33mcommit 91414221252536bd254abd2a9b69dfebc8bd146c[m
+Author: Ahlek <ahleksanael@gmail.com>
+Date:   Fri Dec 15 16:10:39 2023 +0100
+
+    Update gitignore to ignore automake generated files
+
+[33mcommit ae917953ec3d482ec07e3098568af4784057b6f7[m
+Merge: b95ba07 92bfd61
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Fri Dec 15 15:37:53 2023 +0100
+
+    register finis mais pas trop
+
+[33mcommit b95ba0768e17996a80ba87c58faa261f6e028343[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Fri Dec 15 15:33:30 2023 +0100
+
+    register finis mais pas trop
+
+[33mcommit 92bfd61ede1a1d7ad29415b43763cba24ff2395f[m
+Author: Arromatizey <chedadarromatizey@gmail.com>
+Date:   Fri Dec 15 14:28:08 2023 +0100
+
+    Vrai implementation partielle de register_destroy
+
+[33mcommit 2c91865fe97397d8cedd3e64339b097b57a5ce36[m
+Author: Arromatizey <chedadarromatizey@gmail.com>
+Date:   Fri Dec 15 14:23:23 2023 +0100
+
+    Actualisation de la strucutre register_data + implementation de la fonction register_destroy
+
+[33mcommit b06fc600fbf736f492caee3e1c45ce257aaa7474[m
+Merge: 98907f4 5e463f3
+Author: Mohamed Amarcha <80904831+OzawaKyo@users.noreply.github.com>
+Date:   Fri Dec 15 11:10:29 2023 +0100
+
+    Merge pull request #2 from OzawaKyo/Registre
+    
+    Merge pull request #1 from OzawaKyo/main
+
+[33mcommit 5e463f3492905de8919cf931abb0d8d307c52174[m[33m ([m[1;31morigin/Registre[m[33m)[m
+Merge: d04dc8a 98907f4
+Author: Mohamed Amarcha <80904831+OzawaKyo@users.noreply.github.com>
+Date:   Fri Dec 15 11:09:13 2023 +0100
+
+    Merge pull request #1 from OzawaKyo/main
+    
+    Struct
+
+[33mcommit 98907f4a8098b98ed7fc9c5c82fc8c8fc4e2e5e1[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Fri Dec 15 11:08:15 2023 +0100
+
+    registre struct + create
+
+[33mcommit 453680f09e466b2c28d5346425186ca6d59984fa[m
+Author: Ahlek <ahleksanael@gmail.com>
+Date:   Fri Dec 15 10:57:39 2023 +0100
+
+    Add .gitignore and delete build files
+
+[33mcommit d04dc8a2580bdf0b54c7fc7a8d6512e0c4eb22db[m
+Author: Mohamed Amarcha <simoamarcha@icloud.com>
+Date:   Thu Dec 14 15:51:25 2023 +0100
+
+    first commit
