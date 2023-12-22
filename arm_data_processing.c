@@ -607,57 +607,58 @@ int arm_data_processing_immediate_msr(arm_core p, uint32_t ins) {
 	uint8_t rn = (ins >> 16) & 0x0F;
 	uint8_t rd = (ins >> 12) & 0x0F;
 	uint8_t carry_out = 0;
+	uint8_t s = (ins >> 20) & 0x01;
 
 	uint32_t immediate = rotate(p, ins, &carry_out);
 
 	switch (opcode) {
 	case 0x0:
-		arm_write_register(p,rd,And(p, 0, rn, rd, immediate, carry_out));
+		arm_write_register(p,rd,And(p, s, rn, rd, immediate, carry_out));
 		break;
 	case 0x1:
-		arm_write_register(p,rd,Eor(p, 0, rn, rd, immediate, carry_out));
+		arm_write_register(p,rd,Eor(p, s, rn, rd, immediate, carry_out));
 		break;
 	case 0x2:
-		arm_write_register(p,rd,Sub(p, 0, rn, rd, immediate, carry_out));
+		arm_write_register(p,rd,Sub(p, s, rn, rd, immediate, carry_out));
 		break;
 	case 0x3:
-		arm_write_register(p,rd,Rsb(p, 0, rn, rd, immediate, carry_out));
+		arm_write_register(p,rd,Rsb(p, s, rn, rd, immediate, carry_out));
 		break;
 	case 0x4:
-		arm_write_register(p,rd,Add(p, 0, rn, rd, immediate, carry_out));
+		arm_write_register(p,rd,Add(p, s, rn, rd, immediate, carry_out));
 		break;
 	case 0x5:
-		arm_write_register(p,rd,Adc(p, 0, rn, rd, immediate, carry_out));
+		arm_write_register(p,rd,Adc(p, s, rn, rd, immediate, carry_out));
 		break;
 	case 0x6:
-		arm_write_register(p,rd,Sbc(p, 0, rn, rd, immediate, carry_out));
+		arm_write_register(p,rd,Sbc(p, s, rn, rd, immediate, carry_out));
 		break;
 	case 0x7:
-		arm_write_register(p,rd,Rsc(p, 0, rn, rd, immediate, carry_out));
+		arm_write_register(p,rd,Rsc(p, s, rn, rd, immediate, carry_out));
 		break;
 	case 0x8:
-		Tst(p, 0, rn, rd, immediate, carry_out);
+		Tst(p, s, rn, rd, immediate, carry_out);
 		break;
 	case 0x9:
-		Teq(p, 0, rn, rd, immediate, carry_out);
+		Teq(p, s, rn, rd, immediate, carry_out);
 		break;
 	case 0xA:
-		Cmp(p, 0, rn, rd, immediate, carry_out);
+		Cmp(p, s, rn, rd, immediate, carry_out);
 		break;
 	case 0xB:
-		Cmn(p, 0, rn, rd, immediate, carry_out);
+		Cmn(p, s, rn, rd, immediate, carry_out);
 		break;
 	case 0xC:
-		arm_write_register(p,rd,Orr(p, 0, rn, rd, immediate, carry_out));
+		arm_write_register(p,rd,Orr(p, s, rn, rd, immediate, carry_out));
 		break;
 	case 0xD:
-		arm_write_register(p,rd,Mov(p, 0, rn, rd, immediate, carry_out));
+		arm_write_register(p,rd,Mov(p, s, rn, rd, immediate, carry_out));
 		break;
 	case 0xE:
-		arm_write_register(p,rd,Bic(p, 0, rn, rd, immediate, carry_out));
+		arm_write_register(p,rd,Bic(p, s, rn, rd, immediate, carry_out));
 		break;
 	case 0xF:
-		arm_write_register(p,rd,Mvn(p, 0, rn, rd, immediate, carry_out));
+		arm_write_register(p,rd,Mvn(p, s, rn, rd, immediate, carry_out));
 		break;
 	
 	default:
