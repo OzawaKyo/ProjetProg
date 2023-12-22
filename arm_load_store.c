@@ -139,7 +139,6 @@ int str(arm_core p, uint32_t ins){
             }          
         } else{
             // pré-indexé ou offset
-            uint32_t v_source = arm_read_register(p, source);
             if (bitW == 0) {
                 // offset
                 if (bitU == 1) {
@@ -161,7 +160,7 @@ int str(arm_core p, uint32_t ins){
     } else { 
         
         uint8_t Rm = (ins >> 0) & 0x04;
-        uint32_t offset = arm_read_register(p->reg, Rm);
+        uint32_t offset = arm_read_register(p, Rm);
         
 
         if(scaled != 0){ // on est dans le scaled register
