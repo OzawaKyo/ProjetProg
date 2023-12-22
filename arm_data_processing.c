@@ -529,8 +529,8 @@ int arm_data_processing_shift(arm_core p, uint32_t ins) {
 	uint8_t rn = (ins >> 16) & 0x0F;
 	uint8_t rd = (ins >> 12) & 0x0F;
 
-	uint32_t src = arm_read_register(p,rn);
-	uint32_t dest = arm_read_register(p,rd);
+//	uint32_t src = arm_read_register(p,rn);
+//	uint32_t dest = arm_read_register(p,rd);
 	uint8_t s = (ins >> 20) & 0x01;
 	uint8_t carry_out = 0;
 	uint32_t rm = shift(p,ins,&carry_out);

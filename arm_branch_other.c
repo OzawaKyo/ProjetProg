@@ -22,6 +22,9 @@ Contact: Guillaume.Huard@imag.fr
 */
 #include "arm_branch_other.h"
 #include "arm_constants.h"
+
+#include "arm_conditions.h" //we intend to test condition in arm_instruction.c later
+
 #include "util.h"
 #include <debug.h>
 #include <stdlib.h>

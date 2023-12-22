@@ -88,8 +88,6 @@ Contact: Guillaume.Huard@imag.fr
 #define AL 0xE //Always
 #define UN 0xF //depends on ARM version
 
-uint8_t arm_check_cond(arm_core p, uint32_t instruction);
-
 char *arm_get_exception_name(unsigned char exception);
 
 char *arm_get_mode_name(uint8_t mode);

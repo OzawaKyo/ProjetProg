@@ -24,12 +24,12 @@ COMMON=csapp.h csapp.c scanner.h scanner.l debug.h debug.c \
        arm.h arm.c \
        arm_constants.h arm_constants.c \
        arm_core.h arm_core.c \
+       arm_conditions.h arm_conditions.c \
        arm_exception.h arm_exception.c \
        arm_instruction.h arm_instruction.c \
        arm_data_processing.h arm_data_processing.c \
        arm_load_store.h arm_load_store.c \
-       arm_branch_other.h arm_branch_other.c \
-       arm_condition.h arm_condition.c
+       arm_branch_other.h arm_branch_other.c
 
 arm_simulator_SOURCES=$(COMMON) arm_simulator.c
 

@@ -47,67 +47,6 @@ static char *arm_exception_names[] = { NULL,
     "software interrupt",
 };
 
-uint8_t arm_check_cond(arm_core p,uint32_t instruction){
-    uint32_t cond = (instruction >> 28) & 0xF;
-    uint32_t nzcv = (arm_read_cpsr(p) >> 28) & 0xF;
-    uint32_t neg = (nzcv >> 3) & 0x1;
-    uint32_t zero = (nzcv >> 2) & 0x1;
-    uint32_t carry = (nzcv >> 1) & 0x1;
-    uint32_t over = nzcv & 0x1;
-
-    switch (cond)
-    {
-    case EQ:
-        if (zero)
-            return 1;
-    case NE:
-        if (!zero)
-            return 1;
-    case CS:
-        if (carry)
-            return 1;
-    case CC:
-        if (!carry)
-            return 1;
-    case MI:
-        if (neg)
-            return 1;
-    case PL:
-        if (!neg)
-            return 1;
-    case VS:
-        if (over)
-            return 1;
-    case VC:
-        if (!over)
-            return 1;
-    case HI:
-        if (carry && (!zero))
-            return 1;
-    case LS:
-        if ((!carry) || zero)
-            return 1;
-    case GE:
-        if (neg==over)
-            return 1;
-    case LT:
-        if (neg!=over)
-            return 1;
-    case GT:
-        if ((!zero) && (neg==over))
-            return 1;
-    case LE:
-        if (zero && (neg!=over))
-            return 1;
-    case AL:
-        return 1;
-    case UN:
-        return UNDEFINED_INSTRUCTION;//non traité en v4, on peut s'en occuper plus tard pour notre v5
-    default:
-        return 0; 
-    }
-}
-
 char *arm_get_exception_name(unsigned char exception) {
     if (exception < 8)
         return arm_exception_names[exception];

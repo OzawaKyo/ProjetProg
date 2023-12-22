@@ -76,4 +76,5 @@ uint8_t arm_check_cond(arm_core p,uint32_t instruction){
     default:
         return 0; 
     }
+    return 0;
 }

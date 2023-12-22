@@ -372,7 +372,7 @@ int str(arm_core p, uint32_t ins){
     }
 
 
-    if(arm_read_word(p, v_dest, v_source)){
+    if(arm_read_word(p, v_dest, &v_source)){ //j'ai rajouté le &
         return -1;
     }
     return 0;
@@ -402,7 +402,7 @@ int strb(arm_core p, uint32_t ins){
 	uint8_t dest = (ins >> 12) & 0x04;
     //uint32_t cond = (ins >> 28) & 0x1F; // necessaire ?
     
-    mode_t mod = registers_get_mode(p->reg);
+    //mode_t mod = registers_get_mode(p->reg); // je l'ai mit en commentaire car pas utiliser, donc empeche la compilation
     uint32_t v_dest = arm_read_register(p, dest);
     uint32_t v_source = arm_read_register(p, source);
 
@@ -420,7 +420,7 @@ int strh(arm_core p, uint32_t ins){
 	uint8_t dest = (ins >> 12) & 0x04;
     //uint32_t cond = (ins >> 28) & 0x1F; // necessaire ?
     
-    mode_t mod = registers_get_mode(p->reg);
+    //mode_t mod = registers_get_mode(p->reg);  // je l'ai mit en commentaire car pas utiliser, donc empeche la compilation
     uint32_t v_dest = arm_read_register(p, dest);
     uint32_t v_source = arm_read_register(p, source);
 
