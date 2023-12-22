@@ -16,6 +16,7 @@ Examples/Makefile
 config.h
 config.log
 config.status
+stamp-h1
 
 #all objects file
 *.o

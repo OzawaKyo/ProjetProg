@@ -44,7 +44,7 @@ Contact: Guillaume.Huard@imag.fr
 
 
 int arm_load_store(arm_core p, uint32_t ins) {
-    if(ins == NULL || p == NULL){
+    if(ins == 0 || p == NULL){
         return -1;
     }
     uint32_t ls = (ins >> 20) & 1; // Extract bit L (Load if set || Store if unset) from instruction
@@ -63,7 +63,7 @@ int arm_load_store(arm_core p, uint32_t ins) {
 }
 
 int store(arm_core p, uint32_t ins){
-    if(ins == NULL || p == NULL){
+    if(ins == 0 || p == NULL){
         return -1;
     }
     uint32_t x = (ins >> 22) & 1; // Extract bit B (Unsigned byte access if set || Word access if unset) from instruction
@@ -85,7 +85,7 @@ int store(arm_core p, uint32_t ins){
 
 
 int load(arm_core p, uint32_t ins){
-    if(ins == NULL || p == NULL){
+    if(ins == 0 || p == NULL){
         return -1;
     }
     uint32_t x = (ins >> 22) & 1; // Extract bit B (Unsigned byte access if set || Word access if unset) from instruction
@@ -103,7 +103,7 @@ int load(arm_core p, uint32_t ins){
 }
 
 int str(arm_core p, uint32_t ins){
-    if(ins == NULL || p == NULL){
+    if(ins == 0 || p == NULL){
         return -1;
     }
     uint8_t source = (ins >> 16) & 0x04; // Rn
@@ -111,8 +111,8 @@ int str(arm_core p, uint32_t ins){
     uint8_t offset = (ins >> 0) & 0x0C;
     //uint32_t cond = (ins >> 28); // necessaire ?
 
-    uint32_t v_dest = arm_read_register(p->reg, dest); // valeur dans Rd
-    uint32_t v_source = arm_read_register(p->reg, source); // valeur dans Rn
+    uint32_t v_dest = arm_read_register(p, dest); // valeur dans Rd
+    uint32_t v_source = arm_read_register(p, source); // valeur dans Rn
 
     uint32_t immediat = (ins >> 25) & 1; 
     uint32_t bitP = (ins >> 24) & 1;
@@ -136,7 +136,7 @@ int str(arm_core p, uint32_t ins){
             }          
         } else{
             // pré-indexé ou offset
-            uint32_t v_source = arm_read_register(p->reg, source);
+            uint32_t v_source = arm_read_register(p, source);
             if (bitW == 0) {
                 // offset
                 if (bitU == 1) {
@@ -152,13 +152,13 @@ int str(arm_core p, uint32_t ins){
                     address = v_source - offset;
                 }
                 v_source = address;
-                arm_write_register(p->reg, source, v_source);
+                arm_write_register(p, source, v_source);
             }
         }
     } else { 
         
         uint8_t Rm = (ins >> 0) & 0x04;
-        uint32_t offset = arm_read_register(p->reg, Rm);
+        uint32_t offset = arm_read_register(p, Rm);
         
 
         if(scaled != 0){ // on est dans le scaled register
@@ -369,7 +369,7 @@ int str(arm_core p, uint32_t ins){
     }
 
 
-    if(arm_read_word(p->mem, v_dest, v_source)){
+    if(arm_read_word(p, v_dest, v_source)){
         return -1;
     }
     return 0;
@@ -392,7 +392,7 @@ int strb_strh(arm_core p, uint32_t ins){
 }
 
 int strb(arm_core p, uint32_t ins){
-    if(ins == NULL || p == NULL){
+    if(ins == 0 || p == NULL){
         return -1;
     }
     uint8_t source = (ins >> 16) & 0x04;
@@ -400,17 +400,17 @@ int strb(arm_core p, uint32_t ins){
     //uint32_t cond = (ins >> 28) & 0x1F; // necessaire ?
     
     mode_t mod = registers_get_mode(p->reg);
-    uint32_t v_dest = arm_read_register(p->reg, dest);
-    uint32_t v_source = arm_read_register(p->reg, source);
+    uint32_t v_dest = arm_read_register(p, dest);
+    uint32_t v_source = arm_read_register(p, source);
 
-    if(arm_write_byte(p->mem, v_dest, v_source)){
+    if(arm_write_byte(p, v_dest, v_source)){
         return -1;
     }
     return 0;
 }
 
 int strh(arm_core p, uint32_t ins){
-    if(ins == NULL || p == NULL){
+    if(ins == 0 || p == NULL){
         return -1;
     }
     uint8_t source = (ins >> 16) & 0x04;
@@ -418,17 +418,17 @@ int strh(arm_core p, uint32_t ins){
     //uint32_t cond = (ins >> 28) & 0x1F; // necessaire ?
     
     mode_t mod = registers_get_mode(p->reg);
-    uint32_t v_dest = arm_read_register(p->reg, dest);
-    uint32_t v_source = arm_read_register(p->reg, source);
+    uint32_t v_dest = arm_read_register(p, dest);
+    uint32_t v_source = arm_read_register(p, source);
 
-    if(arm_write_half(p->mem, v_dest, v_source)){
+    if(arm_write_half(p, v_dest, v_source)){
         return -1;
     }
     return 0;
 }
 
 int ldrb_ldrh(arm_core p, uint32_t ins) {
-    if(ins == NULL || p == NULL){
+    if(ins == 0 || p == NULL){
         return -1;
     }
     uint32_t x = (ins >> 26) & 1; // Extract bit ???
@@ -446,7 +446,7 @@ int ldrb_ldrh(arm_core p, uint32_t ins) {
 }
 
 int ldr(arm_core p, uint32_t ins) {
-    if(ins == NULL || p == NULL){
+    if(ins == 0 || p == NULL){
         return -1;
     }
     uint8_t source = (ins >> 16) & 0x04;
@@ -454,13 +454,13 @@ int ldr(arm_core p, uint32_t ins) {
     //uint32_t cond = (ins >> 28) & 0x1F;
 
     uint32_t value;
-    uint32_t v_source = arm_read_register(p->reg, source);
+    uint32_t v_source = arm_read_register(p, source);
  
-    if(arm_read_word(p->mem, v_source, &value)){
+    if(arm_read_word(p, v_source, &value)){
         return -1;
     }
 
-    arm_write_register(p->reg, dest, value); 
+    arm_write_register(p, dest, value); 
 
     return 0;
 }
@@ -468,7 +468,7 @@ int ldr(arm_core p, uint32_t ins) {
 
 
 int ldrb(arm_core p, uint32_t ins) {
-    if(ins == NULL || p == NULL){
+    if(ins == 0 || p == NULL){
         return -1;
     }
     uint8_t source = (ins >> 16) & 0x04;
@@ -477,11 +477,11 @@ int ldrb(arm_core p, uint32_t ins) {
 
     uint8_t value;
 
-    if(arm_read_byte(p->mem, source, &value)){
+    if(arm_read_byte(p, source, &value)){
         return -1;
     }
 
-    arm_write_register(p->reg, dest, value); 
+    arm_write_register(p, dest, value); 
 
     return 0;
 
@@ -489,7 +489,7 @@ int ldrb(arm_core p, uint32_t ins) {
 
 
 int ldrh(arm_core p, uint32_t ins) {
-    if(ins == NULL || p == NULL){
+    if(ins == 0 || p == NULL){
         return -1;
     }
     uint8_t source = (ins >> 16) & 0x04;
@@ -498,16 +498,16 @@ int ldrh(arm_core p, uint32_t ins) {
 
     uint16_t value;
     
-    if(arm_read_half(p->mem, source, &value)){
+    if(arm_read_half(p, source, &value)){
         return -1;
     }
-    arm_write_register(p->reg, dest, value); 
+    arm_write_register(p, dest, value); 
     return 0;
 
 }
 
 int arm_load_store_multiple(arm_core p, uint32_t ins) {
-    if(ins == NULL || p == NULL){
+    if(ins == 0 || p == NULL){
         return -1;
     }
      uint32_t ls = (ins >> 20) & 1; // Extract bit L from instruction
@@ -526,7 +526,7 @@ int arm_load_store_multiple(arm_core p, uint32_t ins) {
 }
 
 int stm(arm_core p, uint32_t ins){
-    if(ins == NULL || p == NULL){
+    if(ins == 0 || p == NULL){
         return -1;
     }
    uint32_t b = (ins >> 22) & 1;
@@ -535,7 +535,7 @@ int stm(arm_core p, uint32_t ins){
         uint8_t bitP;
         uint8_t bitU;
         uint8_t dest = (ins >> 16) & 0x04;
-        uint32_t addr = arm_read_register(p->reg, dest);
+        uint32_t addr = arm_read_register(p, dest);
         uint32_t value;
             for(int i = 0; i < 15; i ++){
                 k = (ins >> i) & 1;
@@ -545,16 +545,16 @@ int stm(arm_core p, uint32_t ins){
 
                 if ((bitP == 0) & (bitU == 0)) {
                     // on est dans le mode DA
-                    value = arm_read_register(p->reg, i);
-                    if(arm_write_byte(p->mem, addr, value)){
+                    value = arm_read_register(p, i);
+                    if(arm_write_byte(p, addr, value)){
                         return -1;
                     }
                     addr--;                    
 
                 } else if ((bitP == 0) & (bitU == 1)) {
                     // on est dans le mode IA
-                    value = arm_read_register(p->reg, i);
-                    if(arm_write_byte(p->mem, addr, value)){
+                    value = arm_read_register(p, i);
+                    if(arm_write_byte(p, addr, value)){
                         return -1;
                     }
                     addr++;
@@ -562,16 +562,16 @@ int stm(arm_core p, uint32_t ins){
                 } else if ((bitP == 1) & (bitU == 0)) {
                     // on est dans le mode DB
                     addr--;
-                    value = arm_read_register(p->reg, i);
-                    if(arm_write_byte(p->mem, addr, value)){
+                    value = arm_read_register(p, i);
+                    if(arm_write_byte(p, addr, value)){
                         return -1;
                     }
                     
                 } else {
                     // on est dans le mode IB
                     addr++;
-                    value = arm_read_register(p->reg, i);
-                    if(arm_write_byte(p->mem, addr, value)){
+                    value = arm_read_register(p, i);
+                    if(arm_write_byte(p, addr, value)){
                         return -1;
                     }
                 }  
@@ -582,7 +582,7 @@ int stm(arm_core p, uint32_t ins){
 }
 
 int ldm(arm_core p, uint32_t ins){
-    if(ins == NULL || p == NULL){
+    if(ins == 0 || p == NULL){
         return -1;
     }
     uint32_t b = (ins >> 22) & 1;
@@ -593,9 +593,9 @@ int ldm(arm_core p, uint32_t ins){
         uint8_t bitP;
         uint8_t bitU;
         uint8_t source = (ins >> 16) & 0x04;
-        uint32_t addr = arm_read_register(p->reg, source);
+        uint32_t addr = arm_read_register(p, source);
         uint8_t value;
-        if(arm_read_byte(p->mem, addr, &value)){
+        if(arm_read_byte(p, addr, &value)){
             return -1;
         }
         
@@ -607,23 +607,23 @@ int ldm(arm_core p, uint32_t ins){
 
                 if ((bitP == 0) & (bitU == 0)) {
                     // on est dans le mode DA
-                    arm_write_register(p->reg, i, value);
+                    arm_write_register(p, i, value);
                     addr--;                    
 
                 } else if ((bitP == 0) & (bitU == 1)) {
                     // on est dans le mode IA
-                    arm_write_register(p->reg, i, value);
+                    arm_write_register(p, i, value);
                     addr++;
 
                 } else if ((bitP == 1) & (bitU == 0)) {
                     // on est dans le mode DB
                     addr--;
-                    arm_write_register(p->reg, i, value);
+                    arm_write_register(p, i, value);
                     
                 } else {
                     // mode IB
                     addr++;
-                    arm_write_register(p->reg, i, value);
+                    arm_write_register(p, i, value);
                 }               
             }
         } 
