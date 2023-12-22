@@ -109,9 +109,9 @@ am__objects_1 = csapp.$(OBJEXT) scanner.$(OBJEXT) debug.$(OBJEXT) \
 	gdb_protocol.$(OBJEXT) util.$(OBJEXT) trace.$(OBJEXT) \
 	memory.$(OBJEXT) registers.$(OBJEXT) arm.$(OBJEXT) \
 	arm_constants.$(OBJEXT) arm_core.$(OBJEXT) \
-	arm_exception.$(OBJEXT) arm_instruction.$(OBJEXT) \
-	arm_data_processing.$(OBJEXT) arm_load_store.$(OBJEXT) \
-	arm_branch_other.$(OBJEXT)
+	arm_conditions.$(OBJEXT) arm_exception.$(OBJEXT) \
+	arm_instruction.$(OBJEXT) arm_data_processing.$(OBJEXT) \
+	arm_load_store.$(OBJEXT) arm_branch_other.$(OBJEXT)
 am_arm_simulator_OBJECTS = $(am__objects_1) arm_simulator.$(OBJEXT)
 arm_simulator_OBJECTS = $(am_arm_simulator_OBJECTS)
 arm_simulator_LDADD = $(LDADD)
@@ -147,8 +147,9 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/arm.Po \
-	./$(DEPDIR)/arm_branch_other.Po ./$(DEPDIR)/arm_constants.Po \
-	./$(DEPDIR)/arm_core.Po ./$(DEPDIR)/arm_data_processing.Po \
+	./$(DEPDIR)/arm_branch_other.Po ./$(DEPDIR)/arm_conditions.Po \
+	./$(DEPDIR)/arm_constants.Po ./$(DEPDIR)/arm_core.Po \
+	./$(DEPDIR)/arm_data_processing.Po \
 	./$(DEPDIR)/arm_exception.Po ./$(DEPDIR)/arm_instruction.Po \
 	./$(DEPDIR)/arm_load_store.Po ./$(DEPDIR)/arm_simulator.Po \
 	./$(DEPDIR)/csapp.Po ./$(DEPDIR)/debug.Po \
@@ -396,6 +397,7 @@ COMMON = csapp.h csapp.c scanner.h scanner.l debug.h debug.c \
        arm.h arm.c \
        arm_constants.h arm_constants.c \
        arm_core.h arm_core.c \
+       arm_conditions.h arm_conditions.c \
        arm_exception.h arm_exception.c \
        arm_instruction.h arm_instruction.c \
        arm_data_processing.h arm_data_processing.c \
@@ -527,6 +529,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arm.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arm_branch_other.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arm_conditions.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arm_constants.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arm_core.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arm_data_processing.Po@am__quote@ # am--include-marker
@@ -918,6 +921,7 @@ distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 		-rm -f ./$(DEPDIR)/arm.Po
 	-rm -f ./$(DEPDIR)/arm_branch_other.Po
+	-rm -f ./$(DEPDIR)/arm_conditions.Po
 	-rm -f ./$(DEPDIR)/arm_constants.Po
 	-rm -f ./$(DEPDIR)/arm_core.Po
 	-rm -f ./$(DEPDIR)/arm_data_processing.Po
@@ -985,6 +989,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -rf $(top_srcdir)/autom4te.cache
 		-rm -f ./$(DEPDIR)/arm.Po
 	-rm -f ./$(DEPDIR)/arm_branch_other.Po
+	-rm -f ./$(DEPDIR)/arm_conditions.Po
 	-rm -f ./$(DEPDIR)/arm_constants.Po
 	-rm -f ./$(DEPDIR)/arm_core.Po
 	-rm -f ./$(DEPDIR)/arm_data_processing.Po
