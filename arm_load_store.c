@@ -188,12 +188,12 @@ int str(arm_core p, uint32_t ins){
                         case 0b10:
                             // ASR
                             if (shift_imm == 0) {
-                                
-                                /*if (p->reg->Rm[31] == 1) {
+                                uint8_t g = (arm_read_register(p->reg, Rm) >> 31) & 1;
+                                if (g == 1) {
                                     index = 0xFFFFFFFF;
                                 } else {
                                     index = 0;
-                                }*/
+                                }
                                 
                             } else {
                                 // index = Rm Arithmetic_Shift_Right shift_imm
@@ -246,11 +246,12 @@ int str(arm_core p, uint32_t ins){
                             // ASR
                             if (shift_imm == 0) {
                                 
-                                /*if (p->reg->Rm[31] == 1) {
+                                uint8_t g = (arm_read_register(p->reg, Rm) >> 31) & 1;
+                                if (g == 1) {
                                     index = 0xFFFFFFFF;
                                 } else {
                                     index = 0;
-                                }*/
+                                }
                                 
                             } else {
                                 // index = Rm Arithmetic_Shift_Right shift_imm
