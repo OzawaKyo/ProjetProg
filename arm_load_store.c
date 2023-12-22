@@ -458,13 +458,13 @@ int ldr(arm_core p, uint32_t ins) {
 
     uint32_t value;
     uint32_t v_source = arm_read_register(p, source);
-    uint32_t v_dest = arm_read_register(p, dest);
+
  
     if(arm_read_word(p, v_source, &value)){
         return -1;
     }
 
-    arm_write_register(p, v_dest, value); 
+    arm_write_register(p, dest, value); 
 
     return 0;
 }
@@ -479,7 +479,7 @@ int ldrb(arm_core p, uint32_t ins) {
     uint8_t dest = (ins >> 12) & 0x04;
     //uint32_t cond = (ins >> 28) & 0x1F;
     uint32_t v_source = arm_read_register(p, source);
-    uint32_t v_dest = arm_read_register(p, dest);
+    
 
     uint8_t value;
 
@@ -487,7 +487,7 @@ int ldrb(arm_core p, uint32_t ins) {
         return -1;
     }
 
-    arm_write_register(p, v_dest, value); 
+    arm_write_register(p, dest, value); 
 
     return 0;
 
@@ -502,14 +502,14 @@ int ldrh(arm_core p, uint32_t ins) {
     uint8_t dest = (ins >> 12) & 0x04;
     //uint32_t cond = (ins >> 28) & 0x1F;
     uint32_t v_source = arm_read_register(p, source);
-    uint32_t v_dest = arm_read_register(p, dest);
+
 
     uint16_t value;
     
     if(arm_read_half(p, v_source, &value)){
         return -1;
     }
-    arm_write_register(p, v_dest, value); 
+    arm_write_register(p, dest, value); 
     return 0;
 
 }
