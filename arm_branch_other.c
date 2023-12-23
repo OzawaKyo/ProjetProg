@@ -32,18 +32,18 @@ Contact: Guillaume.Huard@imag.fr
 
 int arm_branch(arm_core p, uint32_t ins) {
     uint32_t linked = (ins >> 24) & 1;
-    int32_t b_offset = ins & 0xFFFFFF; //does mask extends sign ?
+    
+    int32_t mask = ((1U << 24) - 1);
+    int32_t offset_masked = ins & mask;
+    int32_t b_offset = (offset_masked ^ mask) - mask;
+
     uint32_t pc = arm_read_register(p,15);
     
     if (arm_check_cond(p,ins) == 1){
-        if (linked){
+        if (linked)
             arm_write_register(p,14,pc+4);
-            pc = pc+b_offset;
-            arm_write_register(p,15,pc);
-        }else{
-            pc = pc+b_offset;
-            arm_write_register(p,15,pc);
-        }
+        pc = pc+b_offset;
+        arm_write_register(p,15,pc);
         return 0;
     }else{
         return -1;

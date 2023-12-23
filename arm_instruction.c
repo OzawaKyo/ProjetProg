@@ -45,30 +45,30 @@ static int arm_execute_instruction(arm_core p) {
         return result;
     }
     uint32_t type = (instruction >> 25) & 0x07; //Extract type from instruction
-
-    switch (type) {
-        case ARM_TYPE_DATA_PROCESSING:
-            result = arm_data_processing_shift(p, instruction);
-            break;
-        case ARM_TYPE_DATA_IMMEDIATE_MSR:
-            result = arm_data_processing_immediate_msr(p, instruction);
-            break;
-        case ARM_TYPE_LOAD_STORE:
-            result = arm_load_store(p, instruction);
-            break;
-        case ARM_TYPE_LOAD_STORE_MULTIPLE:
-            result = arm_load_store_multiple(p, instruction);
-            break;
-        case ARM_TYPE_COPROCESSOR_LOAD_STORE:
-            result = arm_coprocessor_load_store(p, instruction);
-            break;
-        case ARM_TYPE_BRANCH_OTHER:
-            result = arm_branch(p, instruction);
-            break;
-        default:
-            return UNDEFINED_INSTRUCTION;
+    if (arm_check_cond(p,instruction)){
+        switch (type) {
+            case ARM_TYPE_DATA_PROCESSING:
+                result = arm_data_processing_shift(p, instruction);
+                break;
+            case ARM_TYPE_DATA_IMMEDIATE_MSR:
+                result = arm_data_processing_immediate_msr(p, instruction);
+                break;
+            case ARM_TYPE_LOAD_STORE:
+                result = arm_load_store(p, instruction);
+                break;
+            case ARM_TYPE_LOAD_STORE_MULTIPLE:
+                result = arm_load_store_multiple(p, instruction);
+                break;
+            case ARM_TYPE_COPROCESSOR_LOAD_STORE:
+                result = arm_coprocessor_load_store(p, instruction);
+                break;
+            case ARM_TYPE_BRANCH_OTHER:
+                result = arm_branch(p, instruction);
+                break;
+            default:
+                return UNDEFINED_INSTRUCTION; //error
+        }
     }
-
     return result;
 }
 

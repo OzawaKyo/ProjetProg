@@ -11,6 +11,8 @@ Examples/.deps/
 #Makefiles
 Makefile
 Examples/Makefile
+Makefile.in
+Examples/Makefile.in
 
 #some config files
 config.h
