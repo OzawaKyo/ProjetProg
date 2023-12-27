@@ -1,7 +1,10 @@
-This is yet another ARM processor simulator
+# This is yet another ARM processor simulator
+
 More precisely, this is an ARMv5 instruction set emulator. Thus, it is neither
 cycle accurate, nor very efficient. It has been designed as a teaching tool,
 with modular sources and memory/processor transactions trace capabilities.
+
+## Usage
 
 The main program, arm_simulator acts as a gdb server, so a typical use session
 would look like:
@@ -22,9 +25,17 @@ break 8
 cont
 ... and so on
 
+## Debug
+
 Debugging messages and traces outputed by the simulator can be chosen at
 compile-time using compilation flags. Just comment the undesired flags settings
 in the first lines of Makefile.am, then make clean && make.
+
+### Somehow automatized debug
+
+`./arm.sh [gdb_commands_file (default gdb_commands)] Examples/executable_file` can be used to avoid connecting manually to the simulator with GDB. It allow GDB command scripts use but requires an ELF to function.
+
+## Sources organization
 
 The simulator sources are organized as follows (<- denotes dependences) :
 messages : debug and warning messages functions

@@ -1,0 +1,4 @@
+# default command file, meant to be used with an executable
+target remote localhost:58000
+set endian big
+load

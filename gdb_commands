@@ -1,5 +1,0 @@
-target remote localhost:58000
-set endian big
-load
-cont
-quit
